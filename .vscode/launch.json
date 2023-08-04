@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "${command:cmake.launchTargetPath}",
+            "request": "launch",
+            "type": "cortex-debug",
+            //"runToEntryPoint": "main",
+            "servertype": "openocd",
+            "device": "RP2040",
+            "gdbPath" : "gdb-multiarch",
+            "openOCDLaunchCommands": [
+                "adapter speed 20000"
+            ],
+            "configFiles": [
+                // This may need to be "interface/picoprobe.cfg" for some previous builds
+                "interface/cmsis-dap.cfg",
+                "target/rp2040.cfg"
+            ],
+            // Work around for stopping at main on restart
+            "postRestartCommands": [
+                "break main",
+                "continue"
+            ],
+            "svdFile": "${env:PICO_SDK_PATH}/src/rp2040/hardware_regs/rp2040.svd",
+            //"showDevDebugOutput": "raw",
+            "rttConfig": {
+                "enabled": true,
+                "address": "auto",
+                "decoders": [
+                    {
+                        "label": "",
+                        "port": 0,
+                        "type": "console"
+                    }
+                ]
+            }
+        }
+    ]
+}

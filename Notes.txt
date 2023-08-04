@@ -1,0 +1,147 @@
+
+impact game pad VID = 07b5, PID = 0314
+05 01 09 04 a1 01 09 01 a1 00 09 30 09 31 09 32 09 35 15 00 26 ff 00 35 00 46 ff 00 66 00 00 75 08
+95 04 81 02 c0 09 39 15 01 25 08 35 00 46 3b 01 65 14 75 04 95 01 81 02 05 09 19 01 29 0c 15 00 25
+01 75 01 95 0c 55 00 65 00 81 02 05 08 09 43 15 00 26 ff 00 35 00 46 ff 00 75 08 95 04 91 82 55 00 65 00 55 00 65 00 55 00 c0 
+
+0x05, 0x01,        // Usage Page (Generic Desktop Ctrls)
+0x09, 0x04,        // Usage (Joystick)
+0xA1, 0x01,        // Collection (Application)
+0x09, 0x01,        //   Usage (Pointer)
+0xA1, 0x00,        //   Collection (Physical)
+0x09, 0x30,        //     Usage (X)
+0x09, 0x31,        //     Usage (Y)
+0x09, 0x32,        //     Usage (Z)
+0x09, 0x35,        //     Usage (Rz)
+0x15, 0x00,        //     Logical Minimum (0)
+0x26, 0xFF, 0x00,  //     Logical Maximum (255)
+0x35, 0x00,        //     Physical Minimum (0)
+0x46, 0xFF, 0x00,  //     Physical Maximum (255)
+0x66, 0x00, 0x00,  //     Unit (None)
+0x75, 0x08,        //     Report Size (8)
+0x95, 0x04,        //     Report Count (4)
+0x81, 0x02,        //     Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
+0xC0,              //   End Collection
+0x09, 0x39,        //   Usage (Hat switch)
+0x15, 0x01,        //   Logical Minimum (1)
+0x25, 0x08,        //   Logical Maximum (8)
+0x35, 0x00,        //   Physical Minimum (0)
+0x46, 0x3B, 0x01,  //   Physical Maximum (315)
+0x65, 0x14,        //   Unit (System: English Rotation, Length: Centimeter)
+0x75, 0x04,        //   Report Size (4)
+0x95, 0x01,        //   Report Count (1)
+0x81, 0x02,        //   Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
+0x05, 0x09,        //   Usage Page (Button)
+0x19, 0x01,        //   Usage Minimum (0x01)
+0x29, 0x0C,        //   Usage Maximum (0x0C)
+0x15, 0x00,        //   Logical Minimum (0)
+0x25, 0x01,        //   Logical Maximum (1)
+0x75, 0x01,        //   Report Size (1)
+0x95, 0x0C,        //   Report Count (12)
+0x55, 0x00,        //   Unit Exponent (0)
+0x65, 0x00,        //   Unit (None)
+0x81, 0x02,        //   Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
+0x05, 0x08,        //   Usage Page (LEDs)
+0x09, 0x43,        //   Usage (Slow Blink On Time)
+0x15, 0x00,        //   Logical Minimum (0)
+0x26, 0xFF, 0x00,  //   Logical Maximum (255)
+0x35, 0x00,        //   Physical Minimum (0)
+0x46, 0xFF, 0x00,  //   Physical Maximum (255)
+0x75, 0x08,        //   Report Size (8)
+0x95, 0x04,        //   Report Count (4)
+0x91, 0x82,        //   Output (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Volatile)
+0x55, 0x00,        //   Unit Exponent (0)
+0x65, 0x00,        //   Unit (None)
+0x55, 0x00,        //   Unit Exponent (0)
+0x65, 0x00,        //   Unit (None)
+0x55, 0x00,        //   Unit Exponent (0)
+0xC0,              // End Collection
+
+// 108 bytes
+
+Report Example:
+80 80 80 80 00 00
+--                  Left Stick X
+   --               Left Stick Y
+      --            Right Stick Y
+         --         Right Stick X
+            -  --   Buttons
+             -      Coolie Hat / D-Pad
+
+
+
+Logitech USB Mouse
+VID = 046d, PID = c03e
+HID Interface Protocol = Mouse
+
+05 01 09 02 a1 01 09 01 a1 00 05 09 19 01 29 03 15 00 25 01 95 03 75 01 81 02
+95 05 81 03 05 01 09 30 09 31 09 38 15 81 25 7f 75 08 95 03 81 06 c0 c0 
+
+0x05, 0x01,        // Usage Page (Generic Desktop Ctrls)
+0x09, 0x02,        // Usage (Mouse)
+0xA1, 0x01,        // Collection (Application)
+0x09, 0x01,        //   Usage (Pointer)
+0xA1, 0x00,        //   Collection (Physical)
+0x05, 0x09,        //     Usage Page (Button)
+0x19, 0x01,        //     Usage Minimum (0x01)
+0x29, 0x03,        //     Usage Maximum (0x03)
+0x15, 0x00,        //     Logical Minimum (0)
+0x25, 0x01,        //     Logical Maximum (1)
+0x95, 0x03,        //     Report Count (3)
+0x75, 0x01,        //     Report Size (1)
+0x81, 0x02,        //     Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
+0x95, 0x05,        //     Report Count (5)
+0x81, 0x03,        //     Input (Const,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
+0x05, 0x01,        //     Usage Page (Generic Desktop Ctrls)
+0x09, 0x30,        //     Usage (X)
+0x09, 0x31,        //     Usage (Y)
+0x09, 0x38,        //     Usage (Wheel)
+0x15, 0x81,        //     Logical Minimum (-127)
+0x25, 0x7F,        //     Logical Maximum (127)
+0x75, 0x08,        //     Report Size (8)
+0x95, 0x03,        //     Report Count (3)
+0x81, 0x06,        //     Input (Data,Var,Rel,No Wrap,Linear,Preferred State,No Null Position)
+0xC0,              //   End Collection
+0xC0,              // End Collection
+
+// 50 bytes
+
+Report Example:
+
+00 00 00 00
+--            Buttons on lower 3 Bits
+   --         Relative X
+      --      Relative Y
+         --   Relative Wheel
+
+
+
+Ziel: USB HID -> Amiga Maus/Joystick + C64 Joystick
+RP2040? Hat USB Host aber keine 5V toleranten IO
+
+Pegelwandlung wie?
+Bipolar? Kleine MOSFETs? Müssen ja nicht viel treiben...
+Pegelwandler ICs?
+74HCT244N ?
+Sollte auch Open Drain unterstützen, weil das eher einem Joystick entspricht. Kein Push/Pull
+74HCT125 wäre mit Output Enable für jeden Pin. Ist aber wahrscheinlich größer als 12 kleine MOSFETs
+
+STM32F4? Hat USB Host und 5V tolerante I/O. Gibt aber kaum kleine süße Boards.
+Oder?
+
+https://www.az-delivery.de/products/stm32f401-development-board-v-3-0?variant=43548077621515&utm_source=google&utm_medium=cpc&utm_campaign=16964979024&utm_content=136656817158&utm_term=&gclid=CjwKCAjwh8mlBhB_EiwAsztdBNTa8inYRdYSE3NzAdCJhpo0evsYAKhxce7ze3BvI-xqdd0Z7hntIBoCCG0QAvD_BwE
+
+Generell 2 Joysticks / Mäuse.
+USB Hub notwendig.
+USB C / USB Micro auf USB Hub auf mehrere USB A
+
+https://www.amazon.de/gp/product/B0BLSL7L3Y/ref=ox_sc_act_image_1?smid=A2Y91ZFTIMU0N5&psc=1
+
+https://www.amazon.de/Zerone-Adapterkabel-Android-Tablet-Smartphone-default/dp/B07P8KW6SX/ref=sr_1_4?__mk_de_DE=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=1UZNUP3TUA5Y&keywords=usb+micro+usb+hub&qid=1689420709&s=ce-de&sprefix=usb+micro+usb+hub%2Celectronics%2C98&sr=1-4
+
+
+
+
+https://ww1.microchip.com/downloads/en/DeviceDoc/chapter%208.pdf
+
+
