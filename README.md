@@ -8,7 +8,18 @@ This solution makes use of the Raspberry Pi Pico board (RP2040) which offers a d
 and can be bought at a rather low price (5-8€ per unit).
 Cheap NPN transistors are used for level shifting as the RP2040 is not 5V tolerant.
 
-## Example hardware design
+## How to use
+
+The Yaumataca acts as both Joystick and Mouse. Plug both output ports into both controller ports of the target machine.
+Plug a USB OTG Hub into the Micro-USB port of the Pico board. Insert USB gamepad and USB mouse.
+
+As multiple modes are supported, the [user manual](docs/user_manual.md) provides more detail.
+
+## How to construct
+
+TODO
+
+### Example hardware design
 
 Here an example, how it could be build using BC547 transistors and 10k resistors.
 To operate the unit, one OTG Hub is recommended which provides multiple USB A ports attached to a USB micro port.
@@ -17,10 +28,6 @@ If only one USB device is to be attached, a simple USB micro to USB A adapter wi
 ![Photo of Yaumataca](doc/20230731_223820.jpg)
 ![Photo of Yaumataca from other angle](doc/20230731_223837.jpg)
 
-## How to use
-
-The Yaumataca acts as both Joystick and Mouse. Plug both output ports into both controller ports of the target machine.
-Plug a USB OTG Hub into the Micro-USB port of the Pico board. Insert USB gamepad and USB mouse.
 
 ## How to build the firmware
 

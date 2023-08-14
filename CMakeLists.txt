@@ -1,10 +1,17 @@
 cmake_minimum_required(VERSION 3.17)
 
-# RTT is blocking with tinyusb. Will halt software if no debugger is connected!
-#set (LOGGER "RTT")
+message (STATUS "CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
+
+if ( CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set (LOGGER "RTT")
+  message (STATUS "RTT logger active")
+else()
+  message (STATUS "No RTT")
+endif()
 set (FAMILY "rp2040")
-set (PROJECT "yaumataca")
+set (PROJECT "amigamouse")
 set (PICO_SDK_PATH "${CMAKE_SOURCE_DIR}/pico-sdk")
+# set (LOG 2)
 
 include(${CMAKE_SOURCE_DIR}/tinyusb/hw/bsp/family_support.cmake)
 
@@ -19,6 +26,7 @@ add_executable(${PROJECT})
 
 target_sources(${PROJECT} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/src/hid_app.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/hid_handler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_impact.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_mouse.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_ps3.cpp
@@ -32,4 +40,10 @@ target_include_directories(${PROJECT} PUBLIC
 # Configure compilation flags and libraries for the example without RTOS.
 # See the corresponding function in hw/bsp/FAMILY/family.cmake for details.
 family_configure_host_example(${PROJECT} noos)
+
+target_link_libraries(${PROJECT} PRIVATE pico_stdlib hardware_pio)
+
+pico_generate_pio_header(${PROJECT} ${CMAKE_CURRENT_LIST_DIR}/pio/c1351.pio)
+pico_add_extra_outputs(${PROJECT})
+
 

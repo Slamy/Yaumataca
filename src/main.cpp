@@ -28,67 +28,37 @@
 #include <string.h>
 
 #include "bsp/board.h"
+#include "controller_port.hpp"
+#include "hid_app.hpp"
 #include "pico/stdlib.h"
+#include "processors/joystick_mouse_switcher.hpp"
+#include "processors/mouse_c1351.hpp"
 #include "tusb.h"
-
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
 //--------------------------------------------------------------------+
-void led_blinking_task(void);
 
-extern void cdc_task(void);
-extern void hid_app_task(void);
+PIO C1351Converter::pio_{nullptr};
+uint C1351Converter::offset_{0};
 
 /*------------- MAIN -------------*/
 int main(void) {
     board_init();
 
-    printf("Yaumataca says hello!\r\n");
+    printf("Yaumataca says hello!\n");
 
     // init host stack on configured roothub port
     tuh_init(BOARD_TUH_RHPORT);
 
-    // configure all GPIOs on the left side to be at low output state
-    // to not press any buttons
-    for (int i = 0; i <= 15; i++) {
-        gpio_init(i);
-        gpio_set_dir(i, GPIO_OUT);
-        gpio_put(i, 0);
-    }
+    C1351Converter::setup_pio();
+
+    hid_app_init();
 
     for (;;) {
         // tinyusb host task
         tuh_task();
-        led_blinking_task();
-
-#if CFG_TUH_CDC
-        cdc_task();
-#endif
-
 #if CFG_TUH_HID
         hid_app_task();
 #endif
     }
-}
-
-//--------------------------------------------------------------------+
-// TinyUSB Callbacks
-//--------------------------------------------------------------------+
-
-//--------------------------------------------------------------------+
-// Blinking Task
-//--------------------------------------------------------------------+
-void led_blinking_task(void) {
-    const uint32_t interval_ms = 1000;
-    static uint32_t start_ms = 0;
-
-    static bool led_state = false;
-
-    // Blink every interval ms
-    if (board_millis() - start_ms < interval_ms)
-        return; // not enough time
-    start_ms += interval_ms;
-
-    board_led_write(led_state);
-    led_state = 1 - led_state; // toggle
 }

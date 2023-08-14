@@ -78,9 +78,18 @@
         "any": "cpp",
         "forward_list": "cpp",
         "unordered_set": "cpp",
-        "board.h": "c"
+        "board.h": "c",
+        "cstdbool": "cpp",
+        "netfwd": "cpp",
+        "coroutine": "cpp",
+        "ranges": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/arm-none-eabi-gcc",
     "editor.formatOnSave": true,
     "C_Cpp.errorSquiggles": "disabled",
+    "cortex-debug.variableUseNaturalFormat": true,
+    "cmake.sourceDirectory": [
+        "${workspaceFolder}",
+        "${workspaceFolder}/test"
+    ]
 }

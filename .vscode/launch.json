@@ -5,6 +5,31 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Unittest",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            //"executable": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
             "name": "Cortex Debug",
             "cwd": "${workspaceFolder}",
             "executable": "${command:cmake.launchTargetPath}",
@@ -13,7 +38,10 @@
             //"runToEntryPoint": "main",
             "servertype": "openocd",
             "device": "RP2040",
-            "gdbPath" : "gdb-multiarch",
+            "gdbPath": "gdb-multiarch",
+            "openOCDPreConfigLaunchCommands": [
+                "set USE_CORE 0"
+            ],
             "openOCDLaunchCommands": [
                 "adapter speed 20000"
             ],
@@ -39,6 +67,10 @@
                         "type": "console"
                     }
                 ]
+            },
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
             }
         }
     ]

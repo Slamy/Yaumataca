@@ -1,0 +1,44 @@
+.program sid_adc_stim
+
+    ; Wait until the input pin has a falling edge, indicating the start
+    ; of the cycle
+    wait 1 pin 0
+    wait 0 pin 0
+
+    ; Pull next duration from FIFO to OSR.
+    ; If no value is available, copy X to OSR
+    pull noblock
+    mov x, osr             ; Copy most-recently-pulled value back to scratch X
+    mov y, osr             ; ISR contains PWM period. Y used as counter.
+    
+    set pins, 1            ; Activate drain
+countloop:
+    jmp y-- countloop      ; Loop until Y hits 0
+    set pins, 0            ; Deactivate drain to charge capacitor
+
+% c-sdk {
+
+#include "hardware/clocks.h"
+#include "hardware/gpio.h"
+
+static inline void sid_adc_stim_program_init(PIO pio, uint sm, uint offset, uint sense_pin, uint drive_pin) {
+    pio_sm_config c = sid_adc_stim_program_get_default_config(offset);
+
+    // IO mapping
+    sm_config_set_set_pins(&c, drive_pin, 1);
+    sm_config_set_in_pins(&c, sense_pin);
+    
+    // Set drive pin to be controlled by PIO
+    pio_gpio_init(pio, drive_pin);
+
+    // Set all pins to non driving. Important for re-usage after stopping the machine
+    // otherwise the draining transistors leads to a soft-lock as the edge
+    // detection will fail.
+    pio_sm_set_pins(pio,sm,0);
+
+    // Set drive pin to output
+    pio_sm_set_consecutive_pindirs(pio, sm, drive_pin, 1, true);
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}

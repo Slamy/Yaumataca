@@ -145,3 +145,37 @@ https://www.amazon.de/Zerone-Adapterkabel-Android-Tablet-Smartphone-default/dp/B
 https://ww1.microchip.com/downloads/en/DeviceDoc/chapter%208.pdf
 
 
+Use Case Analysis:
+
+On the back of the Amiga, the left port is the joystick port, the right is the mouse port.
+For two mouses the joystick port is used as second mouse.
+For two joysticks the mouse port is used as second joystick.
+
+First joystick is connected to the joystick port on detection.
+First mouse is connected to the mouse port on detection.
+
+Joysticks have a secondary fire button next to the primary.
+A button on the joystick is an auto fire.
+A button on the joystick can be used to swap ports. This is important for the C64 as games didn't agree on that one.
+It shall never be required to swap controller ports in hardware.
+
+The Atari ST mouse is similar to the Amiga mouse. Changing Configuration somehow must be possible. How?
+User Button on the Pico? It isn't used yet.
+Press User button and Left Mouse button to Switch to Amiga.
+Press User button and Right Mouse button to Switch to Atari ST.
+Press User button and Middle Mouse button to Switch to C1351.
+
+If two joysticks are connected, the second joystick shares signals with the primary mouse.
+If the primary mouse is moved significantly or a button is clicked it is activated.
+If a button on the joystick is pressed it is activated instead.
+
+
+VICE C64 Emulator
+1351 von 64 bis 191.
+191 bricht um zu 64.
+
+Comprehensive list of games and apps that used 1351 mouse
+https://www.lemon64.com/forum/viewtopic.php?t=61515
+
+Source of Pico Pinout:
+https://www.raspberrypi.com/documentation/microcontrollers/images/pico-pinout.svg

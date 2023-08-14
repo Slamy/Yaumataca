@@ -1,45 +1,37 @@
-#include "hid.hpp"
+#include "hid_handler.hpp"
 
 #include "bsp/board.h"
+#include "controller_port.hpp"
 #include "pico/stdlib.h"
 #include "tusb.h"
 
-class ImpactHidHandler : public HidHandler {
+class ImpactHidHandler : public DefaultHidHandler {
     void process_report(std::span<const uint8_t> d) {
 
+#if 0
         printf("Impact:");
         for (uint8_t i : d) {
             printf(" %02x", i);
         }
-        printf("\r\n");
+        printf("\n");
+#endif
+        GamepadReport aj;
 
-        AmigaJoyPort aj;
+        uint8_t hat_dir = (d[4] & 0x0F); // Coolie Hat D-Pad
+        aj.update_from_coolie_hat(hat_dir);
 
-        int hat_dir = (d[4] & 0x0F); // Coolie Hat D-Pad
-        aj.up = (hat_dir == 8 || hat_dir == 1 || hat_dir == 2);
-        aj.right = (hat_dir == 2 || hat_dir == 3 || hat_dir == 4);
-        aj.down = (hat_dir == 4 || hat_dir == 5 || hat_dir == 6);
-        aj.left = (hat_dir == 6 || hat_dir == 7 || hat_dir == 8);
+        aj.fire = d[4] & 0x10;
+        aj.sec_fire = d[4] & 0x20;
+        aj.auto_fire = d[4] & 0x40;
 
-        aj.fire = d[4] & 0x10;    // 1
-        aj.secFire = d[4] & 0x20; // 7
-
-        gpio_put(0, aj.right);
-        gpio_put(1, aj.left);
-        gpio_put(2, aj.down);
-        gpio_put(3, aj.up);
-        gpio_put(4, aj.fire);
-        gpio_put(6, aj.secFire);
-
-        /*
-        gpio_put(15, aj.right);
-        gpio_put(14, aj.left);
-        gpio_put(12, aj.down);
-        gpio_put(10, aj.up);
-        gpio_put(9, aj.fire);
-        gpio_put(7, aj.secFire);
-        */
+        aj.joystick_swap = d[5] & 0x10; // Select button
+        
+        if (target_) {
+            target_->process_gamepad_report(aj);
+        }
     }
+
+    ReportType expected_report() override { return kGamePad; }
 };
 
 static HidHandlerBuilder builder(
