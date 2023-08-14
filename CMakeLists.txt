@@ -9,13 +9,12 @@ else()
   message (STATUS "No RTT")
 endif()
 set (FAMILY "rp2040")
-set (PROJECT "amigamouse")
+set (PROJECT "yaumataca")
 set (PICO_SDK_PATH "${CMAKE_SOURCE_DIR}/pico-sdk")
-# set (LOG 2)
 
 include(${CMAKE_SOURCE_DIR}/tinyusb/hw/bsp/family_support.cmake)
 
-project(amigamouse C CXX ASM)
+project(yaumataca C CXX ASM)
 
 set(CMAKE_CXX_STANDARD 20)
 

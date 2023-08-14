@@ -15,6 +15,31 @@ Plug a USB OTG Hub into the Micro-USB port of the Pico board. Insert USB gamepad
 
 As multiple modes are supported, the [user manual](docs/user_manual.md) provides more detail.
 
+## Features
+* Cheap to build
+* Uses "off the shelf" hardware
+* Multiple USB devices on 2 Atari type controller ports using a single unit
+* Primary joystick on left port
+* Primary mouse on right port
+* Amiga mouse with wheel using [WheelBusMouse](http://aminet.net/package/util/mouse/WheelBusMouse) driver
+* Commodore 1351 in proportional mode
+* Atari ST mouse
+* Automatic switch between mouses and joysticks
+* Swap of controller ports (useful for C64 games)
+* Supports 2 mouses and 2 joysticks (useful for Lemmings and Marble Madness)
+* Auto fire
+
+## Restrictions
+* Only dedicated HID Joysticks are supported.
+	* PS3 Dual Shock
+	* No-name controller I had here
+
+## TODO
+* HID Descriptor Parsing (generic USB joystick support)
+* Bluetooth (eventually)
+* Permanent storage of configuration
+
+
 ## How to construct
 
 TODO
@@ -41,7 +66,9 @@ Ensure that the submodules are also cloned.
 
 ## How to flash
 
-The RP2040 can be flashed using SWD or using the integrated USB Bootloader.
+### Integrated USB bootloader
+
+The RP2040 can be flashed using SWD or using the integrated USB bootloader.
 As not everyone might have a debugger lying around, flash the Pico as so:
 
 * Don't have the Pico board powered and connected.
@@ -53,26 +80,12 @@ As not everyone might have a debugger lying around, flash the Pico as so:
 
 The Yaumataca is now ready for operation
 
-## Features
-* Cheap to build
-* Uses "off the shelf" hardware
-* Multiple USB devices on 2 Atari type controller ports using a single unit
-* Joystick on left port
-* Amiga Mouse on right port
-* Only dedicated HID Joysticks are supported.
+### With SWD
 
-## TODO
-* Auto Fire
-* PS3 Dual Shock
-* Emulation of Commodore 1351 Proportional Mode
-* Support for multiple mouses (useful for Lemmings and Marble Madness)
-* Support for mouse wheel
-* Support for multiple joysticks
-* Support for Atari ST
-* Automatic switch between mouses and joysticks
-* Swap of Joysticks (useful for C64 games)
-* HID Descriptor Parsing (generic USB joystick support)
-* Bluetooth (eventually)
+This assumes that you are using a CMSIS-DAP compatible programmer. It is suggested to use a second Pico board as one. This is possible using [the Picoprobe firmware](https://github.com/raspberrypi/picoprobe/releases).
+Keep in mind that an st-link cannot be used with the RP2040, even so both speak SWD.
+
+	openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 20000; program build/yaumataca.elf verify reset exit"
 
 ## FAQ
 
