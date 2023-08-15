@@ -15,8 +15,8 @@ class QuadratureMouse : public MouseReportProcessor {
     ControllerPortState last_state_;
 
   public:
-    QuadratureMouse() { printf("QuadratureMouse +\n"); }
-    virtual ~QuadratureMouse() { printf("QuadratureMouse -\n"); }
+    QuadratureMouse() { PRINTF("QuadratureMouse +\n"); }
+    virtual ~QuadratureMouse() { PRINTF("QuadratureMouse -\n"); }
 
     std::shared_ptr<ControllerPortInterface> mouse_target_;
     std::shared_ptr<ControllerPortInterface> wheel_target_;

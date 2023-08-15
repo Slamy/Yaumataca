@@ -80,8 +80,8 @@ class C1351Converter : public MouseReportProcessor {
     std::shared_ptr<ControllerPortInterface> target_;
 
   public:
-    C1351Converter() { printf("C1351Converter +\n"); }
-    virtual ~C1351Converter() { printf("C1351Converter -\n"); }
+    C1351Converter() { PRINTF("C1351Converter +\n"); }
+    virtual ~C1351Converter() { PRINTF("C1351Converter -\n"); }
 
     void set_target(std::shared_ptr<ControllerPortInterface> t) { target_ = t; }
 
@@ -103,7 +103,7 @@ class C1351Converter : public MouseReportProcessor {
                                   target_->get_pot_y_sense_gpio(),
                                   target_->get_pot_y_drain_gpio());
 
-        printf("Enable C1351 for %s port\n", target_->get_name());
+        PRINTF("Enable C1351 for %s port\n", target_->get_name());
     }
 
     static void setup_pio() {

@@ -4,14 +4,14 @@
 
 #pragma once
 
-#include "bsp/board.h"
-#include "pico/stdlib.h"
-#include "tusb.h"
-
 #include <array>
 #include <memory>
 
+#include "bsp/board.h"
+#include "pico/stdlib.h"
 #include "processors/interfaces.hpp"
+#include "tusb.h"
+#include "utility.h"
 
 // got singleton pattern from
 // https://stackoverflow.com/questions/1008019/c-singleton-design-pattern
@@ -55,7 +55,7 @@ class RightControllerPort : public ControllerPortInterface {
             gpio_set_dir(i, GPIO_OUT);
             gpio_put(i, 0);
         }
-        printf("GPIOs set for joystick mode on right port\n");
+        PRINTF("GPIOs set for joystick mode on right port\n");
     }
 
     void set_port_state(ControllerPortState &state) override {
@@ -67,10 +67,8 @@ class RightControllerPort : public ControllerPortInterface {
         gpio_put(12, state.left);
         gpio_put(10, state.right);
 
-#if 0
-        printf("R %d%d%d%d %d%d%d\n", state.left, state.up, state.down,
+        PRINTF("R %d%d%d%d %d%d%d\n", state.left, state.up, state.down,
                state.right, state.fire1, state.fire2, state.fire3);
-#endif
     }
 };
 
@@ -109,7 +107,7 @@ class LeftControllerPort : public ControllerPortInterface {
             gpio_put(i, 0);
         }
 
-        printf("GPIOs set for joystick mode on left port\n");
+        PRINTF("GPIOs set for joystick mode on left port\n");
     }
 
     void set_port_state(ControllerPortState &state) {
@@ -121,9 +119,7 @@ class LeftControllerPort : public ControllerPortInterface {
         gpio_put(5, state.fire3); // Also used as Pot Y
         gpio_put(6, state.fire2); // Also used as Pot X
 
-#if 0
-        printf("L %d%d%d%d %d%d%d\n", state.left, state.up, state.down,
+        PRINTF("L %d%d%d%d %d%d%d\n", state.left, state.up, state.down,
                state.right, state.fire1, state.fire2, state.fire3);
-#endif
     }
 };

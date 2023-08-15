@@ -34,6 +34,7 @@
 #include "processors/joystick_mouse_switcher.hpp"
 #include "processors/mouse_c1351.hpp"
 #include "tusb.h"
+#include "utility.h"
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
 //--------------------------------------------------------------------+

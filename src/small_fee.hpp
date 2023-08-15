@@ -12,11 +12,11 @@ const uint8_t *flash_target_contents =
 #ifdef DEBUG
 static inline void print_buf(const uint8_t *buf, size_t len) {
     for (size_t i = 0; i < len; ++i) {
-        printf("%02x", buf[i]);
+        PRINTF("%02x", buf[i]);
         if (i % 16 == 15)
-            printf("\n");
+            PRINTF("\n");
         else
-            printf(" ");
+            PRINTF(" ");
     }
 }
 #endif
@@ -42,11 +42,11 @@ class SingleByteFlashEepromEmulation {
                     config_byte_cache_ =
                         flash_target_contents[next_write_offset_ - 1];
 
-                    printf("Found configuration byte 0x%x at offset 0x%lx\n",
+                    PRINTF("Found configuration byte 0x%x at offset 0x%lx\n",
                            config_byte_cache_, next_write_offset_ - 1);
                     return;
                 } else {
-                    printf("No configuration byte found. Write at 0x%lx\n",
+                    PRINTF("No configuration byte found. Write at 0x%lx\n",
                            next_write_offset_);
                     config_byte_cache_ = 0;
                     return;
@@ -72,27 +72,27 @@ class SingleByteFlashEepromEmulation {
         config_byte_cache_ = config;
 
         if (next_write_offset_ >= FLASH_SECTOR_SIZE) {
-            printf("Erase sector at 0x%x\n", FLASH_TARGET_OFFSET);
+            PRINTF("Erase sector at 0x%x\n", FLASH_TARGET_OFFSET);
             flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
             next_write_offset_ = 0;
         }
 
         uint32_t page_offset = next_write_offset_ & ~0xff;
         uint32_t in_page_offset = next_write_offset_ & 0xff;
-
         uint32_t page = next_write_offset_ >> 8;
+        std::ignore = page; // in case PRINTF is removed via preprocessor
 
-        printf("Reading page %lu from 0x%p\n", page,
+        PRINTF("Reading page %lu from 0x%p\n", page,
                &flash_target_contents[page_offset]);
         memcpy(page_buffer_.data(), &flash_target_contents[page_offset],
                page_buffer_.size());
 
-        printf("Setting 0x%x at offset 0x%lx\n", config, in_page_offset);
+        PRINTF("Setting 0x%x at offset 0x%lx\n", config, in_page_offset);
 
         page_buffer_[in_page_offset] = config;
         // print_buf(page_buffer_.data(), page_buffer_.size());
 
-        printf("Program page %lu at 0x%lx\n", page,
+        PRINTF("Program page %lu at 0x%lx\n", page,
                FLASH_TARGET_OFFSET + page_offset);
 
         flash_range_program(FLASH_TARGET_OFFSET + page_offset,

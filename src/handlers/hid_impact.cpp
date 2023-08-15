@@ -8,13 +8,14 @@
 class ImpactHidHandler : public DefaultHidHandler {
     void process_report(std::span<const uint8_t> d) {
 
-#if 0
-        printf("Impact:");
+#ifdef DEBUG_PRINT
+        PRINTF("Impact:");
         for (uint8_t i : d) {
-            printf(" %02x", i);
+            PRINTF(" %02x", i);
         }
-        printf("\n");
+        PRINTF("\n");
 #endif
+
         GamepadReport aj;
 
         uint8_t hat_dir = (d[4] & 0x0F); // Coolie Hat D-Pad
@@ -25,7 +26,7 @@ class ImpactHidHandler : public DefaultHidHandler {
         aj.auto_fire = d[4] & 0x40;
 
         aj.joystick_swap = d[5] & 0x10; // Select button
-        
+
         if (target_) {
             target_->process_gamepad_report(aj);
         }

@@ -57,16 +57,13 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance,
     uint16_t vid, pid;
     tuh_vid_pid_get(dev_addr, &vid, &pid);
 
-    printf("HID device address = %d, instance = %d is mounted\n", dev_addr,
+    PRINTF("HID device address = %d, instance = %d is mounted\n", dev_addr,
            instance);
-    printf("VID = %04x, PID = %04x\n", vid, pid);
-
-    uint8_t itf_protocol = tuh_hid_interface_protocol(dev_addr, instance);
-    printf("HID Interface Protocol = %d\n", itf_protocol);
+    PRINTF("VID = %04x, PID = %04x\n", vid, pid);
 
     hid_info[instance].report_count = tuh_hid_parse_report_descriptor(
         hid_info[instance].report_info, MAX_REPORT, desc_report, desc_len);
-    printf("HID has %u reports %d %d %d\n", hid_info[instance].report_count,
+    PRINTF("HID has %u reports %d %d %d\n", hid_info[instance].report_count,
            hid_info[instance].report_info[0].report_id,
            hid_info[instance].report_info[0].usage,
            hid_info[instance].report_info[0].usage_page);
@@ -75,9 +72,9 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance,
         HidHandlerBuilder::find(vid, pid, hid_info[instance].report_info);
 
     for (int i = 0; i < desc_len; i++) {
-        printf("%02x ", desc_report[i]);
+        PRINTF("%02x ", desc_report[i]);
     }
-    printf("\n");
+    PRINTF("\n");
 
     if (hid_info[instance].handler) {
         pipeline->integrate_handler(hid_info[instance].handler);
@@ -88,7 +85,7 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance,
         // tuh_hid_report_received_cb() will be invoked when report is
         // available
         if (!tuh_hid_receive_report(dev_addr, instance)) {
-            printf("Error: cannot request to receive report\n");
+            PRINTF("Error: cannot request to receive report\n");
         }
     }
 }
@@ -96,18 +93,23 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance,
 // Invoked when device with hid interface is un-mounted
 void tuh_hid_umount_cb(uint8_t dev_addr, uint8_t instance) {
 
-    printf("HID device address = %d, instance = %d is unmounted\n", dev_addr,
+    std::ignore = dev_addr;
+
+    PRINTF("HID device address = %d, instance = %d is unmounted\n", dev_addr,
            instance);
 
     hid_info[instance].handler.reset();
 }
 
 void print_generic_report(uint8_t const *d, uint16_t len) {
-    printf("Report:");
+    std::ignore = len;
+    std::ignore = d;
+
+    PRINTF("Report:");
     for (int i = 0; i < len; i++) {
-        printf(" %02x", d[i]);
+        PRINTF(" %02x", d[i]);
     }
-    printf("\n");
+    PRINTF("\n");
 }
 
 // Invoked when received report from device via interrupt endpoint
@@ -123,37 +125,49 @@ void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance,
 
     // continue to request to receive report
     if (!tuh_hid_receive_report(dev_addr, instance)) {
-        printf("Error: cannot request to receive report\n");
+        PRINTF("Error: cannot request to receive report\n");
     }
 }
 
 void tuh_hid_report_sent_cb(uint8_t dev_addr, uint8_t idx, uint8_t const *,
                             uint16_t len) {
-    printf("tuh_hid_report_sent_cb %d %d %d\n", dev_addr, idx, len);
+
+    std::ignore = dev_addr;
+    std::ignore = idx;
+    std::ignore = len;
+
+    PRINTF("tuh_hid_report_sent_cb %d %d %d\n", dev_addr, idx, len);
 }
 
 void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx,
                                     uint8_t report_id, uint8_t report_type,
                                     uint16_t len) {
 
-    printf("tuh_hid_set_report_complete_cb %d %d %d %d %d\n", dev_addr, idx,
+    std::ignore = report_id;
+    std::ignore = report_type;
+    std::ignore = len;
+
+    PRINTF("tuh_hid_set_report_complete_cb %d %d %d %d %d\n", dev_addr, idx,
            report_id, report_type, len);
 
     // request to receive report
     // tuh_hid_report_received_cb() will be invoked when report is available
     if (!tuh_hid_receive_report(dev_addr, idx)) {
-        printf("Error: cannot request to receive report\n");
+        PRINTF("Error: cannot request to receive report\n");
     }
 }
 
 void tuh_hid_set_protocol_complete_cb(uint8_t dev_addr, uint8_t idx,
                                       uint8_t protocol) {
-    printf("tuh_hid_set_protocol_complete_cb %d %d   %d\n", dev_addr, idx,
+
+    std::ignore = protocol;
+
+    PRINTF("tuh_hid_set_protocol_complete_cb %d %d   %d\n", dev_addr, idx,
            protocol);
 
     // request to receive report
     // tuh_hid_report_received_cb() will be invoked when report is available
     if (!tuh_hid_receive_report(dev_addr, idx)) {
-        printf("Error: cannot request to receive report\n");
+        PRINTF("Error: cannot request to receive report\n");
     }
 }

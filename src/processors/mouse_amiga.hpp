@@ -11,8 +11,8 @@ class AmigaMouse : public QuadratureMouse {
     ControllerPortState last_wheel_state_;
 
   public:
-    AmigaMouse() { printf("AmigaMouse +\n"); }
-    virtual ~AmigaMouse() { printf("AmigaMouse -\n"); }
+    AmigaMouse() { PRINTF("AmigaMouse +\n"); }
+    virtual ~AmigaMouse() { PRINTF("AmigaMouse -\n"); }
 
     /**
      * @brief Update period

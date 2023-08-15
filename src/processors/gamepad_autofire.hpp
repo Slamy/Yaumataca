@@ -20,8 +20,8 @@ class GamepadAutoFire : public GamepadReportProcessor, public Runnable {
     std::function<void()> swap_callback_;
 
   public:
-    GamepadAutoFire() { printf("GamepadAutoFire +\n"); }
-    virtual ~GamepadAutoFire() { printf("GamepadAutoFire -\n"); }
+    GamepadAutoFire() { PRINTF("GamepadAutoFire +\n"); }
+    virtual ~GamepadAutoFire() { PRINTF("GamepadAutoFire -\n"); }
 
     void set_swap_callback(std::function<void()> swap_callback) {
         swap_callback_ = swap_callback;
@@ -45,7 +45,7 @@ class GamepadAutoFire : public GamepadReportProcessor, public Runnable {
             if (in_state_.joystick_swap) {
                 joystick_swap_cnt_++;
                 if (joystick_swap_cnt_ == kJoystickSwapThreshold) {
-                    printf("Joystick Swap!\n");
+                    PRINTF("Joystick Swap!\n");
 
                     if (swap_callback_) {
                         swap_callback_();

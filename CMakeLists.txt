@@ -2,8 +2,12 @@ cmake_minimum_required(VERSION 3.17)
 
 message (STATUS "CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
 
+if ( CMAKE_BUILD_TYPE STREQUAL "Debug")
   set (LOGGER "RTT")
   message (STATUS "RTT logger active")
+else()
+  message (STATUS "No RTT")
+endif()
 set (FAMILY "rp2040")
 set (PROJECT "yaumataca")
 set (PICO_SDK_PATH "${CMAKE_SOURCE_DIR}/pico-sdk")

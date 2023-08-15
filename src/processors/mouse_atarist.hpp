@@ -7,8 +7,8 @@
 
 class AtariStMouse : public QuadratureMouse {
   public:
-    AtariStMouse() { printf("AtariStMouse +\n"); }
-    virtual ~AtariStMouse() { printf("AtariStMouse -\n"); }
+    AtariStMouse() { PRINTF("AtariStMouse +\n"); }
+    virtual ~AtariStMouse() { PRINTF("AtariStMouse -\n"); }
 
     /**
      * @brief Update period

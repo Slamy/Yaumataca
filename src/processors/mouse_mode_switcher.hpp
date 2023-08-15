@@ -24,8 +24,8 @@ class MouseModeSwitcher : public MouseReportProcessor {
         swap_callback_ = swap_callback;
     }
 
-    MouseModeSwitcher() { printf("MouseModeSwitcher +\n"); }
-    virtual ~MouseModeSwitcher() { printf("MouseModeSwitcher -\n"); }
+    MouseModeSwitcher() { PRINTF("MouseModeSwitcher +\n"); }
+    virtual ~MouseModeSwitcher() { PRINTF("MouseModeSwitcher -\n"); }
 
     std::shared_ptr<ControllerPortInterface> mouse_target_;
     std::shared_ptr<ControllerPortInterface> wheel_target_;
@@ -79,7 +79,7 @@ class MouseModeSwitcher : public MouseReportProcessor {
             uint32_t now = board_millis();
 
             if ((now - swap_press_start_time) > 300) {
-                printf("Mouse Swap!\n");
+                PRINTF("Mouse Swap!\n");
                 swap_performed_ = true;
                 if (swap_callback_) {
                     swap_callback_();

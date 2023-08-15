@@ -6,13 +6,13 @@
 
 class PortSwitcher : public ControllerPortInterface {
   private:
-    PortSwitcher() { printf("PortSwitcher + %p\n", this); }
+    PortSwitcher() { PRINTF("PortSwitcher + %p\n", this); }
 
     std::weak_ptr<PortSwitcher> swap_sibling_;
     std::shared_ptr<ControllerPortInterface> target_;
 
   public:
-    virtual ~PortSwitcher() { printf("PortSwitcher -\n"); }
+    virtual ~PortSwitcher() { PRINTF("PortSwitcher -\n"); }
 
     static std::pair<std::shared_ptr<PortSwitcher>,
                      std::shared_ptr<PortSwitcher>>
@@ -33,7 +33,7 @@ class PortSwitcher : public ControllerPortInterface {
     }
 
     void swap() {
-        printf("Port Swap %p!\n", this);
+        PRINTF("Port Swap %p!\n", this);
 
         if (swap_sibling_.use_count() > 0 && swap_sibling_.expired() == false) {
             std::swap(target_, swap_sibling_.lock()->target_);

@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "utility.h"
+
 #include "gamepad_autofire.hpp"
 #include "interfaces.hpp"
 #include "joystick_mouse_switcher.hpp"
@@ -42,10 +44,10 @@ class Pipeline : public Runnable {
 
   public:
     Pipeline() {
-        printf("Pipeline +\n");
+        PRINTF("Pipeline +\n");
         mouse_mode_ = fee_.get_config_byte();
     }
-    virtual ~Pipeline() { printf("Pipeline -\n"); }
+    virtual ~Pipeline() { PRINTF("Pipeline -\n"); }
 
     void swap_callback() {
         led_pattern_.set_pattern(LedPatternGenerator::k2Long);
@@ -105,7 +107,7 @@ class Pipeline : public Runnable {
     }
 
     void cycle_mouse_mode() {
-        printf("Cycle mouse mode!\n");
+        PRINTF("Cycle mouse mode!\n");
         mouse_mode_ = (mouse_mode_ + 1) % MouseModeSwitcher::number_modes();
 
         mouse_mode_write_back_at_ = board_millis() + 1000 * 10;
@@ -136,33 +138,33 @@ class Pipeline : public Runnable {
         case kMouse:
 
             if (primary_mouse_switcher_->mouse_source_empty()) {
-                printf("Primary mouse\n");
+                PRINTF("Primary mouse\n");
 
                 handler->set_target(primary_mouse_switcher_);
                 primary_mouse_switcher_->register_source(handler);
             } else if (primary_joystick_switcher_->mouse_source_empty()) {
-                printf("Secondary mouse\n");
+                PRINTF("Secondary mouse\n");
 
                 handler->set_target(primary_joystick_switcher_);
                 primary_joystick_switcher_->register_source(handler);
             } else {
-                printf("Mouse ignored!\n");
+                PRINTF("Mouse ignored!\n");
             }
 
             break;
         case kGamePad:
             if (primary_joystick_switcher_->joystick_source_empty()) {
-                printf("Primary joystick\n");
+                PRINTF("Primary joystick\n");
 
                 handler->set_target(primary_joystick_switcher_);
                 primary_joystick_switcher_->register_source(handler);
             } else if (primary_mouse_switcher_->joystick_source_empty()) {
-                printf("Secondary joystick\n");
+                PRINTF("Secondary joystick\n");
 
                 handler->set_target(primary_mouse_switcher_);
                 primary_mouse_switcher_->register_source(handler);
             } else {
-                printf("Joystick ignored!\n");
+                PRINTF("Joystick ignored!\n");
             }
 
             break;
@@ -178,16 +180,10 @@ class Pipeline : public Runnable {
         }
 
         if (mouse_mode_dirty_ && board_millis() > mouse_mode_write_back_at_) {
-            printf("Write mouse_mode to flash!\n");
+            PRINTF("Write mouse_mode to flash!\n");
 
-            volatile uint32_t t1 = board_micros();
-            gpio_put(0, 1);
             fee_.write_config(static_cast<uint8_t>(mouse_mode_));
             mouse_mode_dirty_ = false;
-            volatile uint32_t t2 = board_micros();
-            gpio_put(0, 0);
-
-            printf("dfdf! %ld\n", t2 - t1);
         }
     }
 };

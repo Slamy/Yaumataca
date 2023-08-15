@@ -12,8 +12,8 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     std::weak_ptr<HidHandlerInterface> joystick_source_;
 
   public:
-    JoystickMouseSwitcher() { printf("JoystickMouseSwitcher +\n"); }
-    virtual ~JoystickMouseSwitcher() { printf("JoystickMouseSwitcher -\n"); }
+    JoystickMouseSwitcher() { PRINTF("JoystickMouseSwitcher +\n"); }
+    virtual ~JoystickMouseSwitcher() { PRINTF("JoystickMouseSwitcher -\n"); }
 
     std::shared_ptr<MouseReportProcessor> mouse_target_;
     std::shared_ptr<GamepadReportProcessor> gamepad_target_;
@@ -36,7 +36,7 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     void process_gamepad_report(GamepadReport &report) override {
 
         if (report.button_pressed && active_ != kGamePad) {
-            printf("Switched to gamepad\n");
+            PRINTF("Switched to gamepad\n");
             active_ = kGamePad;
             gamepad_target_->ensure_joystick_muxing();
         }
@@ -51,7 +51,7 @@ class JoystickMouseSwitcher : public ReportHubInterface {
              (labs(report.rely) > kMouseChangeThreshold) ||
              report.button_pressed) &&
             active_ != kMouse) {
-            printf("Switched to mouse\n");
+            PRINTF("Switched to mouse\n");
             active_ = kMouse;
             mouse_target_->ensure_mouse_muxing();
         }

@@ -9,13 +9,14 @@
 class PS3DualShockHandler : public DefaultHidHandler {
     void process_report(std::span<const uint8_t> d) override {
 
-#if 0
-        printf("PS3:");
+#ifdef DEBUG_PRINT
+        PRINTF("PS3:");
         for (uint8_t i : d) {
-            printf(" %02x", i);
+            PRINTF(" %02x", i);
         }
-        printf("\n");
+        PRINTF("\n");
 #endif
+
         GamepadReport aj;
 
         // The Dual shock doesn't use a coolie hat for the D-Pad
@@ -45,7 +46,7 @@ class PS3DualShockHandler : public DefaultHidHandler {
         cmd_buf[3] = 0x00;
 
         if (!tuh_hid_set_report(dev_addr, instance, 0xf4, 0x03, cmd_buf, 4)) {
-            printf("Error: cannot send tuh_hid_set_report\n");
+            PRINTF("Error: cannot send tuh_hid_set_report\n");
         }
     }
 

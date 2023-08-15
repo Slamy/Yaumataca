@@ -9,6 +9,7 @@
 
 #include "processors/interfaces.hpp"
 #include "tusb.h"
+#include "utility.h"
 
 class DefaultHidHandler : public HidHandlerInterface {
   protected:
@@ -23,7 +24,7 @@ class DefaultHidHandler : public HidHandlerInterface {
         // request to receive report
         // tuh_hid_report_received_cb() will be invoked when report is available
         if (!tuh_hid_receive_report(dev_addr, instance)) {
-            printf("Error: cannot request to receive report\n");
+            PRINTF("Error: cannot request to receive report\n");
         }
     }
 };

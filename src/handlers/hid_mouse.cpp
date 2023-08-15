@@ -5,13 +5,14 @@ class MouseReportHandler : public DefaultHidHandler {
   public:
     void process_report(std::span<const uint8_t> report) override {
 
-#if 0
-        printf("Mouse:");
+#ifdef DEBUG_PRINT
+        PRINTF("Mouse:");
         for (uint8_t i : report) {
-            printf(" %02x", i);
+            PRINTF(" %02x", i);
         }
-        printf("\n");
+        PRINTF("\n");
 #endif
+
         auto mouse_report =
             *reinterpret_cast<const struct MouseReport *>(report.data());
 
@@ -23,7 +24,9 @@ class MouseReportHandler : public DefaultHidHandler {
     void setup_reception(int8_t dev_addr, uint8_t instance) override {
         bool result =
             tuh_hid_set_protocol(dev_addr, instance, HID_PROTOCOL_REPORT);
-        printf("tuh_hid_set_protocol = %d\n", result);
+
+        std::ignore = result;
+        PRINTF("tuh_hid_set_protocol = %d\n", result);
     }
 
     ReportType expected_report() override { return kMouse; }
