@@ -11,6 +11,7 @@
 #include "mouse_c1351.hpp"
 #include "mouse_mode_switcher.hpp"
 #include "port_switcher.hpp"
+#include "small_fee.hpp"
 
 class Pipeline : public Runnable {
   private:
@@ -32,10 +33,18 @@ class Pipeline : public Runnable {
     std::vector<std::shared_ptr<Runnable>> runnables_;
 
     LedPatternGenerator led_pattern_;
+    SingleByteFlashEepromEmulation fee_;
+
     int mouse_mode_{0};
 
+    bool mouse_mode_dirty_{false};
+    uint32_t mouse_mode_write_back_at_{0};
+
   public:
-    Pipeline() { printf("Pipeline +\n"); }
+    Pipeline() {
+        printf("Pipeline +\n");
+        mouse_mode_ = fee_.get_config_byte();
+    }
     virtual ~Pipeline() { printf("Pipeline -\n"); }
 
     void swap_callback() {
@@ -98,6 +107,10 @@ class Pipeline : public Runnable {
     void cycle_mouse_mode() {
         printf("Cycle mouse mode!\n");
         mouse_mode_ = (mouse_mode_ + 1) % MouseModeSwitcher::number_modes();
+
+        mouse_mode_write_back_at_ = board_millis() + 1000 * 10;
+        mouse_mode_dirty_ = true;
+
         mouse_switcher1_->set_mode(mouse_mode_);
         mouse_switcher2_->set_mode(mouse_mode_);
 
@@ -162,6 +175,19 @@ class Pipeline : public Runnable {
         led_pattern_.run();
         for (auto &i : runnables_) {
             i->run();
+        }
+
+        if (mouse_mode_dirty_ && board_millis() > mouse_mode_write_back_at_) {
+            printf("Write mouse_mode to flash!\n");
+
+            volatile uint32_t t1 = board_micros();
+            gpio_put(0, 1);
+            fee_.write_config(static_cast<uint8_t>(mouse_mode_));
+            mouse_mode_dirty_ = false;
+            volatile uint32_t t2 = board_micros();
+            gpio_put(0, 0);
+
+            printf("dfdf! %ld\n", t2 - t1);
         }
     }
 };

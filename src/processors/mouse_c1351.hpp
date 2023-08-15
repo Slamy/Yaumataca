@@ -123,8 +123,6 @@ class C1351Converter : public MouseReportProcessor {
             last_state_ = state_;
             target_->set_port_state(state_);
         }
-
-        // printf("PIO %lu %lu\n", mouse_accumulator_x, mouse_accumulator_y);
     }
 
     uint32_t values_pushed_cnt_{0};
