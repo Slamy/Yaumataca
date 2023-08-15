@@ -10,6 +10,12 @@ class AtariStMouse : public QuadratureMouse {
     AtariStMouse() { printf("AtariStMouse +\n"); }
     virtual ~AtariStMouse() { printf("AtariStMouse -\n"); }
 
+    /**
+     * @brief Update period
+     * TODO Test with real Atari ST
+     */
+    static constexpr uint32_t kUpdatePeriod = 110;
+
     void run() override {
         uint32_t now = board_micros();
         uint32_t time_diff = now - last_update;

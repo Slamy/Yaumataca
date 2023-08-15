@@ -14,7 +14,13 @@ class AmigaMouse : public QuadratureMouse {
     AmigaMouse() { printf("AmigaMouse +\n"); }
     virtual ~AmigaMouse() { printf("AmigaMouse -\n"); }
 
-    static constexpr uint32_t kUpdatePeriod = 21;
+    /**
+     * @brief Update period
+     * Tested in Amiga workbench with permament maximum speed over seconds.
+     * Period of 359 us is too fast. 532 us too.
+     * 110 will lead to a period of 704 us, which is ok. No glitches.
+     */
+    static constexpr uint32_t kUpdatePeriod = 110;
 
     void run() override {
         uint32_t now = board_micros();

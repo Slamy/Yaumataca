@@ -32,7 +32,7 @@ class Pipeline : public Runnable {
     std::vector<std::shared_ptr<Runnable>> runnables_;
 
     LedPatternGenerator led_pattern_;
-    int mouse_mode_{2};
+    int mouse_mode_{0};
 
   public:
     Pipeline() { printf("Pipeline +\n"); }
