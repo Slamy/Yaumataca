@@ -43,10 +43,6 @@ class Pipeline : public Runnable {
     uint32_t mouse_mode_write_back_at_{0};
 
   public:
-    Pipeline() {
-        PRINTF("Pipeline +\n");
-        mouse_mode_ = fee_.get_config_byte();
-    }
     virtual ~Pipeline() { PRINTF("Pipeline -\n"); }
 
     void swap_callback() {
@@ -64,6 +60,10 @@ class Pipeline : public Runnable {
 
     Pipeline(std::shared_ptr<ControllerPortInterface> joystick_port,
              std::shared_ptr<ControllerPortInterface> mouse_port) {
+        PRINTF("Pipeline +\n");
+
+        mouse_mode_ = fee_.get_config_byte();
+
         joystick_port->configure_gpios();
         mouse_port->configure_gpios();
 

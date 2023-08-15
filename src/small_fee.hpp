@@ -69,7 +69,10 @@ class SingleByteFlashEepromEmulation {
         // as an unwritten byte
         config &= 0x7f;
 
-        config_byte_cache_ = config;
+        if (config_byte_cache_ == config) {
+            PRINTF("Value was already written\n");
+            return;
+        }
 
         if (next_write_offset_ >= FLASH_SECTOR_SIZE) {
             PRINTF("Erase sector at 0x%x\n", FLASH_TARGET_OFFSET);
@@ -97,6 +100,8 @@ class SingleByteFlashEepromEmulation {
 
         flash_range_program(FLASH_TARGET_OFFSET + page_offset,
                             page_buffer_.data(), page_buffer_.size());
+
+        config_byte_cache_ = config;
         next_write_offset_++;
     }
 };

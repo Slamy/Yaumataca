@@ -33,6 +33,8 @@ class MouseModeSwitcher : public MouseReportProcessor {
     static int number_modes() { return 3; }
 
     void set_mode(int mode) {
+        PRINTF("Set mouse mode %d\n", mode);
+
         switch (mode) {
         case 0: {
             auto impl = std::make_shared<AmigaMouse>();
