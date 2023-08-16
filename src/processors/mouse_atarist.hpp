@@ -1,10 +1,27 @@
-
+/**
+ * @file mouse_atarist.hpp
+ * @author André Zeps
+ * @brief
+ * @version 0.1
+ * @date 2023-08-16
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 
 #pragma once
 
 #include "mouse_quadrature.hpp"
 #include "processors/interfaces.hpp"
 
+/**
+ * @brief Emulation of an Atari ST Mouse
+ *
+ * Provides quadrature encoded signals. Very similar to the \ref AmigaMouse
+ * but with a different pinout. (Why did they do this?)
+ * Were they afraid that people would connect an Amiga mouse to an Atari ST and
+ * vice versa?
+ */
 class AtariStMouse : public QuadratureMouse {
   public:
     AtariStMouse() { PRINTF("AtariStMouse +\n"); }

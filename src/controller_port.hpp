@@ -1,7 +1,13 @@
-/** @file controller_port.hpp
+/**
+ * @file controller_port.hpp
+ * @author André Zeps
+ * @brief
+ * @version 0.1
+ * @date 2023-08-16
+ *
+ * @copyright Copyright (c) 2023
  *
  */
-
 #pragma once
 
 #include <array>
@@ -17,9 +23,9 @@
 // https://stackoverflow.com/questions/1008019/c-singleton-design-pattern
 
 /**
- * @brief Representation of ownership of physical controller port.
- * There are always two. Cannot be constructed from the outside because of that.
- *
+ * @brief Representation of ownership of the right physical controller port.
+ * There is only one. Cannot be constructed from the outside because of that.
+ * On the Amiga, this is used for the Mouse.
  */
 class RightControllerPort : public ControllerPortInterface {
   private:
@@ -31,6 +37,11 @@ class RightControllerPort : public ControllerPortInterface {
 
     const char *get_name() override { return "Right/CP1/Mouse"; }
 
+    /**
+     * @brief Returns single instance of this class
+     *
+     * @return std::unique_ptr<RightControllerPort> Single instance
+     */
     static std::unique_ptr<RightControllerPort> getInstance() {
         static std::unique_ptr<RightControllerPort> instance =
             std::unique_ptr<RightControllerPort>(new RightControllerPort());
@@ -72,8 +83,13 @@ class RightControllerPort : public ControllerPortInterface {
     }
 };
 
+/**
+ * @brief Representation of ownership of the left physical controller port.
+ * There is only one. Cannot be constructed from the outside because of that.
+ * On the Amiga, this is used for the Joystick.
+ */
 class LeftControllerPort : public ControllerPortInterface {
-
+  private:
     LeftControllerPort() {}
 
   public:
@@ -82,6 +98,11 @@ class LeftControllerPort : public ControllerPortInterface {
     LeftControllerPort(LeftControllerPort const &) = delete;
     void operator=(LeftControllerPort const &) = delete;
 
+    /**
+     * @brief Returns single instance of this class
+     *
+     * @return std::unique_ptr<LeftControllerPort> Single instance
+     */
     static std::unique_ptr<LeftControllerPort> getInstance() {
         static std::unique_ptr<LeftControllerPort> instance =
             std::unique_ptr<LeftControllerPort>(new LeftControllerPort());

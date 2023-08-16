@@ -1,11 +1,25 @@
+/**
+ * @file small_fee.hpp
+ * @author André Zeps
+ * @brief
+ * @version 0.1
+ * @date 2023-08-16
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #pragma once
 
 #include "hardware/flash.h"
 
 // We're going to erase and reprogram a region 256k from the start of flash.
 // Once done, we can access this at XIP_BASE + 256k.
+
+/// Address in flash to write data to
 #define FLASH_TARGET_OFFSET (256 * 1024)
 
+/// Address in CPU memory map to read configuration data from flash
 const uint8_t *flash_target_contents =
     (const uint8_t *)(XIP_BASE + FLASH_TARGET_OFFSET);
 
@@ -21,14 +35,34 @@ static inline void print_buf(const uint8_t *buf, size_t len) {
 }
 #endif
 
+/**
+ * @brief Implements flash EEPROM emulation for single byte storage
+ *
+ */
 class SingleByteFlashEepromEmulation {
   private:
+    /**
+     * @brief Next write position starting from the start of the erase sector.
+     * After finding the most recent configuration byte this is used to keep
+     * track on where to write next.
+     */
     uint32_t next_write_offset_{0};
+
+    /// @brief Cache of the recovered configuration. Avoids repeated reads
     uint8_t config_byte_cache_{0};
 
+    /**
+     * @brief Stores the current page to edit.
+     * Additional 0 bits can be added while 1 bits have to stay.
+     */
     std::array<uint8_t, FLASH_PAGE_SIZE> page_buffer_;
 
   public:
+    /**
+     * @brief Returns the currently stored configuration
+     *
+     * @return uint8_t Value between 0x00 and 0x7f
+     */
     uint8_t get_config_byte() { return config_byte_cache_; }
 
     SingleByteFlashEepromEmulation() {

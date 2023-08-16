@@ -1,5 +1,20 @@
+/**
+ * @file hid_mouse.cpp
+ * @author André Zeps
+ * @brief
+ * @version 0.1
+ * @date 2023-08-16
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "hid_handler.hpp"
 
+/**
+ * @brief Generic handler of USB HID reports for mouses
+ * Will try to force the mouse into report mode to support wheel movement
+ */
 class MouseReportHandler : public DefaultHidHandler {
 
   public:

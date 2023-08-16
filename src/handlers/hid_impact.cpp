@@ -1,3 +1,14 @@
+/**
+ * @file hid_impact.cpp
+ * @author André Zeps
+ * @brief
+ * @version 0.1
+ * @date 2023-08-16
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "hid_handler.hpp"
 
 #include "bsp/board.h"
@@ -5,6 +16,10 @@
 #include "pico/stdlib.h"
 #include "tusb.h"
 
+/**
+ * @brief Driver for the noname impact Controller
+ * Is a very early cheap USB clone of the Playstation 1 controller.
+ */
 class ImpactHidHandler : public DefaultHidHandler {
     void process_report(std::span<const uint8_t> d) {
 

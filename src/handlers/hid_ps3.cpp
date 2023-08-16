@@ -1,3 +1,14 @@
+/**
+ * @file hid_ps3.cpp
+ * @author André Zeps
+ * @brief
+ * @version 0.1
+ * @date 2023-08-16
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #include "hid_handler.hpp"
 
 #include "bsp/board.h"
@@ -6,6 +17,10 @@
 
 #include "controller_port.hpp"
 
+/**
+ * @brief Driver for the PS3 Dual Shock Controller
+ *
+ */
 class PS3DualShockHandler : public DefaultHidHandler {
     void process_report(std::span<const uint8_t> d) override {
 

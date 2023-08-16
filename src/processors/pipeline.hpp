@@ -1,5 +1,13 @@
-/// @file pipeline.hpp
-
+/**
+ * @file pipeline.hpp
+ * @author André Zeps
+ * @brief
+ * @version 0.1
+ * @date 2023-08-16
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 #pragma once
 
 #include "utility.h"
@@ -15,36 +23,59 @@
 #include "port_switcher.hpp"
 #include "small_fee.hpp"
 
+/**
+ * @brief Central manager of data flow in this project
+ * Connects the various components in meaningful manner.
+ */
 class Pipeline : public Runnable {
   private:
+    /// @brief Controller Port 1, Mouse Port, Right Port
     std::shared_ptr<JoystickMouseSwitcher> primary_mouse_switcher_{
         std::make_shared<JoystickMouseSwitcher>()};
 
+    /// @brief Controller Port 2, Joystick Port, Left Port
     std::shared_ptr<JoystickMouseSwitcher> primary_joystick_switcher_{
         std::make_shared<JoystickMouseSwitcher>()};
 
+    /// @brief Proxy object which relays incoming controller port data
     std::shared_ptr<PortSwitcher> joystick_port_;
+    /// @brief Proxy object which relays incoming controller port data
     std::shared_ptr<PortSwitcher> mouse_port_;
 
+    /// @brief Proxy object which selects a mouse driver
     std::shared_ptr<MouseModeSwitcher> mouse_switcher1_;
+    /// @brief Proxy object which selects a mouse driver
     std::shared_ptr<MouseModeSwitcher> mouse_switcher2_;
 
+    /// @brief Auto fire implementation
     std::shared_ptr<GamepadAutoFire> autofire1;
+    /// @brief Auto fire implementation
     std::shared_ptr<GamepadAutoFire> autofire2;
 
+    /// @brief List of all objects that require constant attention
     std::vector<std::shared_ptr<Runnable>> runnables_;
 
+    /// @brief Makes the LED of the Pico blink
     LedPatternGenerator led_pattern_;
+    /// @brief Writes configuration data
     SingleByteFlashEepromEmulation fee_;
 
+    /// @brief Currently selected mouse type. Ranges 0-2
     int mouse_mode_{0};
 
+    /// @brief Is true, if configuration has to be written back
     bool mouse_mode_dirty_{false};
+
+    /// @brief Absolute time in milliseconds when to write the configuration
     uint32_t mouse_mode_write_back_at_{0};
 
   public:
     virtual ~Pipeline() { PRINTF("Pipeline -\n"); }
 
+    /**
+     * @brief Performs controller port swapping
+     * Also ensures that GPIOs are correctly mixed
+     */
     void swap_callback() {
         led_pattern_.set_pattern(LedPatternGenerator::k2Long);
 
@@ -58,6 +89,12 @@ class Pipeline : public Runnable {
             primary_mouse_switcher_->ensure_muxing();
     }
 
+    /**
+     * @brief Construct a new Pipeline object
+     *
+     * @param joystick_port     Primary jostick port
+     * @param mouse_port        Primary mouse port
+     */
     Pipeline(std::shared_ptr<ControllerPortInterface> joystick_port,
              std::shared_ptr<ControllerPortInterface> mouse_port) {
         PRINTF("Pipeline +\n");
@@ -106,6 +143,13 @@ class Pipeline : public Runnable {
         runnables_.push_back(autofire2);
     }
 
+    /**
+     * @brief Switches to next mouse mode
+     *
+     * Cycles though Amiga, Atari ST and C1351.
+     * Ensures the correct muxing of the output pins
+     * Starts a 10 second timer upon expiration the config is stored in flash
+     */
     void cycle_mouse_mode() {
         PRINTF("Cycle mouse mode!\n");
         mouse_mode_ = (mouse_mode_ + 1) % MouseModeSwitcher::number_modes();
@@ -132,6 +176,13 @@ class Pipeline : public Runnable {
         }
     }
 
+    /**
+     * @brief Integrates a new HID handler into the pipeline
+     *
+     * Only 2 mouses and 2 joysticks can be integrated.
+     * More will be ignored.
+     * @param handler handler to integrate
+     */
     void integrate_handler(std::shared_ptr<HidHandlerInterface> handler) {
 
         switch (handler->expected_report()) {

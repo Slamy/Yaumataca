@@ -1,3 +1,13 @@
+/**
+ * @file hid_app.cpp
+ * @author André Zeps
+ * @brief
+ * @version 0.1
+ * @date 2023-08-16
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 
 #include "bsp/board.h"
 #include "pico/stdlib.h"
@@ -10,6 +20,7 @@
 #include "controller_port.hpp"
 #include "processors/pipeline.hpp"
 
+/// Maximum number of reports to read from a single HID Report Descriptor
 #define MAX_REPORT 4
 
 // Each HID instance can has multiple reports
@@ -45,11 +56,15 @@ void hid_app_task(void) {
 // TinyUSB Callbacks
 //--------------------------------------------------------------------+
 
-// Invoked when device with hid interface is mounted
-// Report descriptor is also available for use.
-// tuh_hid_parse_report_descriptor() can be used to parse common/simple enough
-// descriptor. Note: if report descriptor length > CFG_TUH_ENUMERATION_BUFSIZE,
-// it will be skipped therefore report_desc = NULL, desc_len = 0
+/**
+ * @brief Invoked when device with hid interface is mounted
+ * Report descriptor is also available for use.
+ * tuh_hid_parse_report_descriptor() can be used to parse common/simple enough
+ * descriptor. Note: if report descriptor length > CFG_TUH_ENUMERATION_BUFSIZE,
+ * it will be skipped therefore report_desc = NULL, desc_len = 0
+ *
+ */
+
 void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance,
                       uint8_t const *desc_report, uint16_t desc_len) {
     (void)desc_report;
@@ -90,7 +105,12 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance,
     }
 }
 
-// Invoked when device with hid interface is un-mounted
+/**
+ * @brief Invoked when device with hid interface is un-mounted
+ *
+ * @param dev_addr TinyUSB internal device identifier
+ * @param instance TinyUSB internal endpoint identifier
+ */
 void tuh_hid_umount_cb(uint8_t dev_addr, uint8_t instance) {
 
     std::ignore = dev_addr;
@@ -101,6 +121,12 @@ void tuh_hid_umount_cb(uint8_t dev_addr, uint8_t instance) {
     hid_info[instance].handler.reset();
 }
 
+/**
+ * @brief Small helper function to print an array
+ *
+ * @param d     data
+ * @param len   length in bytes
+ */
 void print_generic_report(uint8_t const *d, uint16_t len) {
     std::ignore = len;
     std::ignore = d;
@@ -112,7 +138,14 @@ void print_generic_report(uint8_t const *d, uint16_t len) {
     PRINTF("\n");
 }
 
-// Invoked when received report from device via interrupt endpoint
+/**
+ * @brief Invoked when received report from device via interrupt endpoint
+ *
+ * @param dev_addr TinyUSB internal device identifier
+ * @param instance TinyUSB internal endpoint identifier
+ * @param report Raw report data
+ * @param len Length of report in bytes
+ */
 void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance,
                                 uint8_t const *report, uint16_t len) {
 
@@ -129,6 +162,13 @@ void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance,
     }
 }
 
+/**
+ * @brief Invoked when sent report to device successfully via interrupt endpoint
+ *
+ * @param dev_addr
+ * @param idx
+ * @param len
+ */
 void tuh_hid_report_sent_cb(uint8_t dev_addr, uint8_t idx, uint8_t const *,
                             uint16_t len) {
 
@@ -139,6 +179,16 @@ void tuh_hid_report_sent_cb(uint8_t dev_addr, uint8_t idx, uint8_t const *,
     PRINTF("tuh_hid_report_sent_cb %d %d %d\n", dev_addr, idx, len);
 }
 
+/**
+ * @brief Invoked when Sent Report to device via either control endpoint
+ * len = 0 indicate there is error in the transfer e.g stalled response
+ *
+ * @param dev_addr
+ * @param idx
+ * @param report_id
+ * @param report_type
+ * @param len
+ */
 void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx,
                                     uint8_t report_id, uint8_t report_type,
                                     uint16_t len) {
@@ -157,6 +207,13 @@ void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx,
     }
 }
 
+/**
+ * @brief Invoked when Set Protocol request is complete
+ *
+ * @param dev_addr
+ * @param idx
+ * @param protocol
+ */
 void tuh_hid_set_protocol_complete_cb(uint8_t dev_addr, uint8_t idx,
                                       uint8_t protocol) {
 

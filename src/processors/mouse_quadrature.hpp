@@ -1,24 +1,42 @@
-
+/**
+ * @file mouse_quadrature.hpp
+ * @author André Zeps
+ * @brief
+ * @version 0.1
+ * @date 2023-08-16
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 #pragma once
 
 #include "processors/interfaces.hpp"
 #include "quadrature_encoder.hpp"
 
+/**
+ * @brief Shared code between \ref AmigaMouse and \ref AtariStMouse
+ * Provides 3 quadrature encoders and mouse button handling which is equal for
+ * both systems.
+ */
 class QuadratureMouse : public MouseReportProcessor {
   protected:
-    QuadratureEncoder h;
-    QuadratureEncoder v;
-    QuadratureEncoder wheel;
+    QuadratureEncoder h;     ///< horizontal movement
+    QuadratureEncoder v;     ///< vertical movement
+    QuadratureEncoder wheel; ///< wheel movement (only used by \ref AmigaMouse)
+    /// absolute time in microseconds when the output has changed
     uint32_t last_update{0};
 
-    ControllerPortState state_;
-    ControllerPortState last_state_;
+    ControllerPortState state_;      ///< current state of the controller port
+    ControllerPortState last_state_; ///< last state to check for changes
 
   public:
     QuadratureMouse() { PRINTF("QuadratureMouse +\n"); }
     virtual ~QuadratureMouse() { PRINTF("QuadratureMouse -\n"); }
 
+    /// @brief Destination of mouse buttons and quadrature signals
     std::shared_ptr<ControllerPortInterface> mouse_target_;
+
+    /// @brief Destination of wheel quadrature signals
     std::shared_ptr<ControllerPortInterface> wheel_target_;
 
     void process_mouse_report(MouseReport &mouse_report) override {
