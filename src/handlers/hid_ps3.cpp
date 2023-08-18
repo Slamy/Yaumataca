@@ -22,6 +22,29 @@
  *
  */
 class PS3DualShockHandler : public DefaultHidHandler {
+
+  private:
+    /**
+     * @brief Enables PS3 Controller
+     *
+     * Got this from
+     * https://github.com/felis/USB_Host_Shield_2.0/blob/master/PS3USB.cpp#L491
+     * @param dev_addr
+     * @param instance
+     */
+    void enable_sixaxis(int8_t dev_addr, uint8_t instance) {
+        static uint8_t cmd_buf[4];
+        cmd_buf[0] = 0x42; // Special PS3 Controller enable commands
+        cmd_buf[1] = 0x0c;
+        cmd_buf[2] = 0x00;
+        cmd_buf[3] = 0x00;
+
+        if (!tuh_hid_set_report(dev_addr, instance, 0xf4, 0x03, cmd_buf, 4)) {
+            PRINTF("Error: cannot send tuh_hid_set_report\n");
+        }
+    }
+
+  public:
     void process_report(std::span<const uint8_t> d) override {
 
 #ifdef DEBUG_PRINT
@@ -52,16 +75,10 @@ class PS3DualShockHandler : public DefaultHidHandler {
     }
 
     void setup_reception(int8_t dev_addr, uint8_t instance) override {
-        // Got this from
-        // https://github.com/felis/USB_Host_Shield_2.0/blob/master/PS3USB.cpp#L491
-        static uint8_t cmd_buf[4];
-        cmd_buf[0] = 0x42; // Special PS3 Controller enable commands
-        cmd_buf[1] = 0x0c;
-        cmd_buf[2] = 0x00;
-        cmd_buf[3] = 0x00;
+        enable_sixaxis(dev_addr, instance);
 
-        if (!tuh_hid_set_report(dev_addr, instance, 0xf4, 0x03, cmd_buf, 4)) {
-            PRINTF("Error: cannot send tuh_hid_set_report\n");
+        if (!tuh_hid_receive_report(dev_addr, instance)) {
+            PRINTF("Error: cannot request to receive report\n");
         }
     }
 

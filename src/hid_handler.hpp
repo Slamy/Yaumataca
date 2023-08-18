@@ -43,6 +43,8 @@ class DefaultHidHandler : public HidHandlerInterface {
             PRINTF("Error: cannot request to receive report\n");
         }
     }
+
+    void run() override{};
 };
 
 /**

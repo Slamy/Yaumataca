@@ -122,7 +122,7 @@ class ReportHubInterface;
 /**
  * @brief Interface for classes that process HID reports from USB devices
  */
-class HidHandlerInterface {
+class HidHandlerInterface : public Runnable {
   public:
     /**
      * @brief Called after the detection of a HID endpoint

@@ -28,6 +28,7 @@ target_sources(${PROJECT} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/src/hid_handler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_impact.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_mouse.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_switch_pro.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_ps3.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
   )

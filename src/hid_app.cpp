@@ -39,6 +39,11 @@ void hid_app_init(void) {
 void hid_app_task(void) {
     pipeline->run();
 
+    for (auto &i : hid_info) {
+        if (i.handler)
+            i.handler->run();
+    }
+
     static uint32_t button_debounce_cnt = 0;
     static uint32_t last_button_state = 0;
     bool button_state = board_button_read();
@@ -85,11 +90,6 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance,
 
     hid_info[instance].handler =
         HidHandlerBuilder::find(vid, pid, hid_info[instance].report_info);
-
-    for (int i = 0; i < desc_len; i++) {
-        PRINTF("%02x ", desc_report[i]);
-    }
-    PRINTF("\n");
 
     if (hid_info[instance].handler) {
         pipeline->integrate_handler(hid_info[instance].handler);
@@ -171,10 +171,9 @@ void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance,
  */
 void tuh_hid_report_sent_cb(uint8_t dev_addr, uint8_t idx, uint8_t const *,
                             uint16_t len) {
-
+    std::ignore = len;
     std::ignore = dev_addr;
     std::ignore = idx;
-    std::ignore = len;
 
     PRINTF("tuh_hid_report_sent_cb %d %d %d\n", dev_addr, idx, len);
 }
@@ -193,18 +192,14 @@ void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx,
                                     uint8_t report_id, uint8_t report_type,
                                     uint16_t len) {
 
+    std::ignore = dev_addr;
+    std::ignore = idx;
     std::ignore = report_id;
     std::ignore = report_type;
     std::ignore = len;
 
     PRINTF("tuh_hid_set_report_complete_cb %d %d %d %d %d\n", dev_addr, idx,
            report_id, report_type, len);
-
-    // request to receive report
-    // tuh_hid_report_received_cb() will be invoked when report is available
-    if (!tuh_hid_receive_report(dev_addr, idx)) {
-        PRINTF("Error: cannot request to receive report\n");
-    }
 }
 
 /**
@@ -216,15 +211,10 @@ void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx,
  */
 void tuh_hid_set_protocol_complete_cb(uint8_t dev_addr, uint8_t idx,
                                       uint8_t protocol) {
-
+    std::ignore = dev_addr;
+    std::ignore = idx;
     std::ignore = protocol;
 
     PRINTF("tuh_hid_set_protocol_complete_cb %d %d   %d\n", dev_addr, idx,
            protocol);
-
-    // request to receive report
-    // tuh_hid_report_received_cb() will be invoked when report is available
-    if (!tuh_hid_receive_report(dev_addr, idx)) {
-        PRINTF("Error: cannot request to receive report\n");
-    }
 }

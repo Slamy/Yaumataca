@@ -41,6 +41,10 @@ class MouseReportHandler : public DefaultHidHandler {
             tuh_hid_set_protocol(dev_addr, instance, HID_PROTOCOL_REPORT);
 
         std::ignore = result;
+
+        if (!tuh_hid_receive_report(dev_addr, instance)) {
+            PRINTF("Error: cannot request to receive report\n");
+        }
         PRINTF("tuh_hid_set_protocol = %d\n", result);
     }
 

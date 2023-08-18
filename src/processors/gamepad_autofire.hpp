@@ -36,7 +36,7 @@ class GamepadAutoFire : public GamepadReportProcessor, public Runnable {
     bool auto_fire_state_{false};
 
     /// @brief Half period of auto fire in milliseconds
-    uint32_t auto_fire_period_{100};
+    uint32_t auto_fire_period_{30};
 
     /// @brief Increment every \ref auto_fire_period_ when select is held
     /// Is checked against \ref kJoystickSwapThreshold
