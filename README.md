@@ -28,16 +28,18 @@ As multiple modes are supported, the [user manual](docs/user_manual.md) provides
 * Swap of controller ports (useful for C64 games)
 * Supports 2 mouses and 2 joysticks (useful for Lemmings and Marble Madness)
 * Auto fire
+* Configured mouse type is saved in flash
 
 ## Restrictions
 * Only dedicated HID Joysticks are supported.
 	* PS3 Dual Shock
+	* Nintendo Switch Pro Controller
 	* No-name controller I had here
 
 ## TODO
 * HID Descriptor Parsing (generic USB joystick support)
 * Bluetooth (eventually)
-* Permanent storage of configuration
+
 
 
 ## How to construct

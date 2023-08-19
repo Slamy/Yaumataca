@@ -35,6 +35,8 @@ class MockControllerPort : public ControllerPortInterface {
     MOCK_METHOD(uint, get_pot_y_drain_gpio, ());
     MOCK_METHOD(uint, get_pot_y_sense_gpio, ());
     MOCK_METHOD(void, configure_gpios, ());
+
+    const char *get_name() override { return ""; }
 };
 
 class MockHidHandler : public HidHandlerInterface {
@@ -53,6 +55,8 @@ class MockHidHandler : public HidHandlerInterface {
     void set_target(std::shared_ptr<ReportHubInterface> target) override {
         target_ = target;
     };
+
+    void run() override{};
 };
 PIO C1351Converter::pio_{nullptr};
 uint C1351Converter::offset_{0};
@@ -89,8 +93,8 @@ TEST(Pipeline, SingleJoystickAndAmigaMouse) {
     std::shared_ptr<MockControllerPort> port_mouse =
         std::make_shared<MockControllerPort>();
 
-    EXPECT_CALL(*port_joy, configure_gpios);
-    EXPECT_CALL(*port_mouse, configure_gpios);
+    EXPECT_CALL(*port_joy, configure_gpios).Times(testing::AtLeast(1));
+    EXPECT_CALL(*port_mouse, configure_gpios).Times(testing::AtLeast(1));
 
     ON_CALL(*port_mouse, set_port_state(_))
         .WillByDefault([](ControllerPortState state) { cps_to_text(state); });
@@ -151,19 +155,22 @@ TEST(Pipeline, SingleJoystickAndAmigaMouse) {
     printf("Move the mouse horizontally...\n");
     {
         MouseReport report;
-        report.relx = 5;
+        report.relx = 9;
         mock_mouse->target_->process_mouse_report(report);
 
         ControllerPortState expected_state;
 
         std::queue<ControllerPortState> states;
 
-        states.push(cps_from_text("0001 000"));
-        states.push(cps_from_text("0101 000"));
         states.push(cps_from_text("0100 000"));
-        states.push(cps_from_text("0000 000"));
+        states.push(cps_from_text("0101 000"));
         states.push(cps_from_text("0001 000"));
-
+        states.push(cps_from_text("0000 000"));
+        states.push(cps_from_text("0100 000"));
+        states.push(cps_from_text("0101 000"));
+        states.push(cps_from_text("0001 000"));
+        states.push(cps_from_text("0000 000"));
+        states.push(cps_from_text("0100 000"));
         {
             testing::InSequence s;
 
@@ -192,11 +199,43 @@ TEST(Pipeline, SingleJoystickAndAmigaMouse) {
 
         std::queue<ControllerPortState> states;
 
-        states.push(cps_from_text("0011 000"));
-        states.push(cps_from_text("1011 000"));
-        states.push(cps_from_text("1001 000"));
-        states.push(cps_from_text("0001 000"));
-        states.push(cps_from_text("0011 000"));
+        states.push(cps_from_text("1100 000"));
+        states.push(cps_from_text("1110 000"));
+        states.push(cps_from_text("0110 000"));
+        states.push(cps_from_text("0100 000"));
+        states.push(cps_from_text("1100 000"));
+
+        {
+            testing::InSequence s;
+
+            while (!states.empty()) {
+                expected_state = states.front();
+                expect_str(expected_state);
+                EXPECT_CALL(*port_mouse, set_port_state(expected_state));
+                states.pop();
+            }
+        }
+
+        for (int i = 0; i < 30; i++) {
+            global_time_us += AmigaMouse::kUpdatePeriod;
+            pipeline->run();
+        }
+    }
+
+    printf("Move the mouse vertically back...\n");
+    {
+        MouseReport report;
+        report.rely = -5;
+        mock_mouse->target_->process_mouse_report(report);
+
+        ControllerPortState expected_state;
+
+        std::queue<ControllerPortState> states;
+        states.push(cps_from_text("0100 000"));
+        states.push(cps_from_text("0110 000"));
+        states.push(cps_from_text("1110 000"));
+        states.push(cps_from_text("1100 000"));
+        states.push(cps_from_text("0100 000"));
 
         {
             testing::InSequence s;
@@ -243,6 +282,7 @@ TEST(Pipeline, SingleJoystickAndAmigaMouse) {
     }
 
     // Swap the joysticks
+
     {
         GamepadReport report;
         report.joystick_swap = 1;
@@ -290,8 +330,8 @@ TEST(Pipeline, DualAmigaMouse) {
     std::shared_ptr<MockControllerPort> port_mouse =
         std::make_shared<MockControllerPort>();
 
-    EXPECT_CALL(*port_joy, configure_gpios);
-    EXPECT_CALL(*port_mouse, configure_gpios);
+    EXPECT_CALL(*port_joy, configure_gpios).Times(testing::AtLeast(1));
+    EXPECT_CALL(*port_mouse, configure_gpios).Times(testing::AtLeast(1));
 
     ON_CALL(*port_mouse, set_port_state(_))
         .WillByDefault([](ControllerPortState state) { cps_to_text(state); });
@@ -315,11 +355,11 @@ TEST(Pipeline, DualAmigaMouse) {
     // Move the mouse horizontally
 
     MouseReport report1;
-    report1.relx = 5;
+    report1.relx = 9;
     mock_mouse1->target_->process_mouse_report(report1);
 
     MouseReport report2;
-    report2.rely = 5;
+    report2.rely = 9;
     mock_mouse2->target_->process_mouse_report(report2);
 
     ControllerPortState expected_state;
@@ -327,11 +367,15 @@ TEST(Pipeline, DualAmigaMouse) {
     {
         std::queue<ControllerPortState> states;
 
-        states.push(cps_from_text("0001 000"));
-        states.push(cps_from_text("0101 000"));
         states.push(cps_from_text("0100 000"));
-        states.push(cps_from_text("0000 000"));
+        states.push(cps_from_text("0101 000"));
         states.push(cps_from_text("0001 000"));
+        states.push(cps_from_text("0000 000"));
+        states.push(cps_from_text("0100 000"));
+        states.push(cps_from_text("0101 000"));
+        states.push(cps_from_text("0001 000"));
+        states.push(cps_from_text("0000 000"));
+        states.push(cps_from_text("0100 000"));
 
         {
             testing::InSequence s;
@@ -348,12 +392,15 @@ TEST(Pipeline, DualAmigaMouse) {
     {
         std::queue<ControllerPortState> states;
 
-        states.push(cps_from_text("0010 000"));
-        states.push(cps_from_text("1010 000"));
         states.push(cps_from_text("1000 000"));
-        states.push(cps_from_text("0000 000"));
+        states.push(cps_from_text("1010 000"));
         states.push(cps_from_text("0010 000"));
-
+        states.push(cps_from_text("0000 000"));
+        states.push(cps_from_text("1000 000"));
+        states.push(cps_from_text("1010 000"));
+        states.push(cps_from_text("0010 000"));
+        states.push(cps_from_text("0000 000"));
+        states.push(cps_from_text("1000 000"));
         {
             testing::InSequence s;
 

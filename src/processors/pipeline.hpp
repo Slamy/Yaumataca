@@ -137,10 +137,8 @@ class Pipeline : public Runnable {
         mouse_switcher1_->set_mode(mouse_mode_);
         mouse_switcher2_->set_mode(mouse_mode_);
 
-        runnables_.push_back(mouse_switcher1_);
-        runnables_.push_back(mouse_switcher2_);
-        runnables_.push_back(autofire1);
-        runnables_.push_back(autofire2);
+        runnables_.push_back(primary_mouse_switcher_);
+        runnables_.push_back(primary_joystick_switcher_);
     }
 
     /**

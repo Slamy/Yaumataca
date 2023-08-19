@@ -39,10 +39,10 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     virtual ~JoystickMouseSwitcher() { PRINTF("JoystickMouseSwitcher -\n"); }
 
     /// @brief Sink for mouse reports
-    std::shared_ptr<MouseReportProcessor> mouse_target_;
+    std::shared_ptr<RunnableMouseReportProcessor> mouse_target_;
 
     /// @brief Sink for gamepad reports
-    std::shared_ptr<GamepadReportProcessor> gamepad_target_;
+    std::shared_ptr<RunnableGamepadReportProcessor> gamepad_target_;
 
     /// @brief Returns true if no mouse source is registered
     bool mouse_source_empty() { return mouse_source_.expired(); }
@@ -91,6 +91,8 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     void run() override {
         if (mouse_target_ && active_ == kMouse) {
             mouse_target_->run();
+        } else if (gamepad_target_ && active_ == kGamePad) {
+            gamepad_target_->run();
         }
     }
 

@@ -16,7 +16,6 @@
 #include "bsp/board.h"
 #include "pico/stdlib.h"
 #include "processors/interfaces.hpp"
-#include "tusb.h"
 #include "utility.h"
 
 // got singleton pattern from

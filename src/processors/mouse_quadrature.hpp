@@ -18,7 +18,7 @@
  * Provides 3 quadrature encoders and mouse button handling which is equal for
  * both systems.
  */
-class QuadratureMouse : public MouseReportProcessor {
+class QuadratureMouse : public RunnableMouseReportProcessor {
   protected:
     QuadratureEncoder h;     ///< horizontal movement
     QuadratureEncoder v;     ///< vertical movement

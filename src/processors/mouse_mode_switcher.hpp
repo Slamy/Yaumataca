@@ -22,11 +22,11 @@
  *
  * Will call a swap callback handler if all 3 buttons are pressed for some time.
  */
-class MouseModeSwitcher : public MouseReportProcessor {
+class MouseModeSwitcher : public RunnableMouseReportProcessor {
 
   private:
     /// @brief contains the currently used mouse implementation
-    std::shared_ptr<MouseReportProcessor> impl_;
+    std::shared_ptr<RunnableMouseReportProcessor> impl_;
 
     /// @brief true if 3 buttons of the mouse are pressed
     bool swap_combination_pressed_{false};

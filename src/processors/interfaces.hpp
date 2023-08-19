@@ -180,7 +180,7 @@ class GamepadReportProcessor {
 /**
  * @brief Interface which processes mouse input
  */
-class MouseReportProcessor : public Runnable {
+class MouseReportProcessor {
   public:
     /**
      * @brief Provides mouse button states and incremental movement to this
@@ -199,13 +199,20 @@ class MouseReportProcessor : public Runnable {
     virtual void ensure_mouse_muxing() = 0;
 };
 
+class RunnableMouseReportProcessor : public MouseReportProcessor,
+                                     public Runnable {};
+
+class RunnableGamepadReportProcessor : public GamepadReportProcessor,
+                                       public Runnable {};
+
 /**
  * @brief Interface which processes reports from both \ref MouseReportProcessor
  * and \ref GamepadReportProcessor.
  * Used for classes which behave on joystick vs. mouse behaviour.
  */
 class ReportHubInterface : public MouseReportProcessor,
-                           public GamepadReportProcessor {
+                           public GamepadReportProcessor,
+                           public Runnable {
 
   public:
     /**

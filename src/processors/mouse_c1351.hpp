@@ -38,7 +38,7 @@
  * machines. We will use all of them to drive 2x POTX and 2x POTY
  *
  */
-class C1351Converter : public MouseReportProcessor {
+class C1351Converter : public RunnableMouseReportProcessor {
   private:
     /// @brief Single PIO unit for all 4 required pins.
     static PIO pio_;

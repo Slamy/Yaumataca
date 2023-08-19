@@ -14,7 +14,6 @@
 #include "bsp/board.h"
 #include "controller_port.hpp"
 #include "pico/stdlib.h"
-#include "tusb.h"
 
 /**
  * @brief Driver for the noname impact Controller

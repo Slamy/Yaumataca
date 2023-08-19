@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "processors/interfaces.hpp"
-#include "tusb.h"
 #include "utility.h"
 
 /**

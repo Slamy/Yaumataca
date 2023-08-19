@@ -13,13 +13,14 @@
 
 #include "bsp/board.h"
 #include "processors/interfaces.hpp"
+#include "utility.h"
 #include <functional>
 
 /**
  * @brief Derives additional actions from Joystick input
  * Implements auto fire and detects intent to swap controller ports.
  */
-class GamepadAutoFire : public GamepadReportProcessor, public Runnable {
+class GamepadAutoFire : public RunnableGamepadReportProcessor {
   private:
     /// @brief absolute time in milliseconds when auto fire was handled last
     uint32_t last_update{0};
