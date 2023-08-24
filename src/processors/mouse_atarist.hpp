@@ -29,15 +29,21 @@ class AtariStMouse : public QuadratureMouse {
 
     /**
      * @brief Update period
-     * TODO Test with real Atari ST
+     * Tested with real Atari 1040STFM with GEM on Low Resolution.
+     * 350 is ok. 310 is not ok. 330 is also not ok. 340 is not ok, leading
+     * to 1.44ms period. We are going for 360 here which is a period of 1.7ms
+     * Or maybe even 420 wich also leads to 1.7ms but more stable as it seems.
+     * 425 leads to 1.78ms which seems to be more stable than 1.7ms in the long
+     * run.
+     * 450 leads to 2ms which is even more stable. Hallucination?
      */
-    static constexpr uint32_t kUpdatePeriod = 110;
+    static constexpr uint32_t kUpdatePeriod = 450;
 
     void run() override {
         uint32_t now = board_micros();
         uint32_t time_diff = now - last_update;
 
-        if (time_diff > 20) {
+        if (time_diff > kUpdatePeriod) {
             last_update = now;
             auto h_state = h.update();
             auto v_state = v.update();
