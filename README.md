@@ -13,7 +13,7 @@ Cheap NPN transistors are used for level shifting as the RP2040 is not 5V tolera
 The Yaumataca acts as both Joystick and Mouse. Plug both output ports into both controller ports of the target machine.
 Plug a USB OTG Hub into the Micro-USB port of the Pico board. Insert USB gamepad and USB mouse.
 
-As multiple modes are supported, the [user manual](docs/user_manual.md) provides more detail.
+As multiple modes are supported, the [user manual](doc/user_manual.md) provides more detail.
 
 ## Features
 * Cheap to build
@@ -40,11 +40,9 @@ As multiple modes are supported, the [user manual](docs/user_manual.md) provides
 * HID Descriptor Parsing (generic USB joystick support)
 * Bluetooth (eventually)
 
-
-
 ## How to construct
 
-TODO
+[Manual for construction](doc/construction.md)
 
 ### Example hardware design
 

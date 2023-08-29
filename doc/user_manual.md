@@ -1,8 +1,13 @@
 # Yaumataca User Manual
 
 The Yaumataca acts as both Joystick and Mouse. Plug both output ports into both controller ports of the target machine.
-The device is intended for usage with the Commodore Amiga, C64 and Atari ST systems. Do not plug this device into an Amstrad CPC as the joystick ports work different.
+The device is intended for usage with the Commodore Amiga, C64 and Atari ST systems. Do not plug this device into an Amstrad CPC as the joystick ports work differently.
 
+## Gamepad Layout
+
+It is assumed that most gamepads nowadays have a layout similiar to a Super Nintendo Controller. From 1993 to 2023, this statement seems valid and unbroken. We use a PlayStation controller as reference here.
+
+![Button layout](button_layout.svg)
 
 ## Startup behaviour
 
@@ -18,7 +23,7 @@ For the C64 this is a different story as no norm exists on which controller port
 
 ## Automatic swapping of second joystick and mouse
 
-With both the Amiga and the Atari ST a second joystick is attached to the mouse port and a second mouse has to be attached to the joystick port. This is cumbersome as constant plugging of devices is required.
+With both the Amiga and the Atari ST a second joystick is attached to the mouse port and a second mouse has to be attached to the joystick port. This is cumbersome as constant replugging of devices is required.
 
 The Yaumataca detects changes on the USB devices and automatically swaps between first mouse / second joystick and first joystick / second mouse.
 This way you can have your primary joystick and primary mouse always attached to the system and just add additional devices.
