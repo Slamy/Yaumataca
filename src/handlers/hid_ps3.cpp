@@ -24,6 +24,12 @@
 class PS3DualShockHandler : public DefaultHidHandler {
 
   private:
+    /// @brief Neutral position of a joystick axis.
+    static constexpr uint32_t kAnalogCenter{0x80};
+
+    /// @brief Minimum difference to center to register a direction
+    static constexpr uint32_t kAnalogThreshold{0x40};
+
     /**
      * @brief Enables PS3 Controller
      *
@@ -59,13 +65,15 @@ class PS3DualShockHandler : public DefaultHidHandler {
 
         // The Dual shock doesn't use a coolie hat for the D-Pad
         // instead it is handled like 4 buttons
-        aj.left = d[2] & 0x80;
-        aj.down = d[2] & 0x40;
-        aj.right = d[2] & 0x20;
-        aj.up = d[2] & 0x10;
+        aj.left = (d[2] & 0x80) || (d[6] < (kAnalogCenter - kAnalogThreshold));
+        aj.down = (d[2] & 0x40) || (d[7] > (kAnalogCenter + kAnalogThreshold));
+        aj.right = (d[2] & 0x20) || (d[6] > (kAnalogCenter + kAnalogThreshold));
+        aj.up = (d[2] & 0x10) || (d[7] < (kAnalogCenter - kAnalogThreshold));
 
-        aj.fire = d[3] & 0x80;     // Square
-        aj.sec_fire = d[3] & 0x10; // Triangle
+        aj.fire = (d[3] & 0x80) ||  // Square
+                  (d[3] & 0x20);    // Circle
+        aj.sec_fire = d[3] & 0x10;  // Triangle
+        aj.auto_fire = d[3] & 0x40; // Cross
 
         aj.joystick_swap = d[2] & 0x01; // Select
 
