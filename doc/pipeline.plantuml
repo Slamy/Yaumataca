@@ -1,0 +1,68 @@
+@startuml
+
+object optical_mouse
+object trackball
+object ps3controller
+object switch_pro
+
+left to right direction
+
+package Pipeline {
+object primary_mouse_switcher
+object primary_joystick_switcher
+object joystick_port
+object mouse_port
+object mouse_switcher1
+object mouse_switcher2
+object autofire1
+object autofire2
+}
+
+object physical_joystick_port
+object physical_mouse_port
+
+HidHandlerInterface <|-- optical_mouse
+HidHandlerInterface <|-- ps3controller
+HidHandlerInterface <|-- trackball
+HidHandlerInterface <|-- switch_pro
+
+optical_mouse --> primary_mouse_switcher : mouse report
+ps3controller --> primary_joystick_switcher : gamepad report
+trackball --> primary_joystick_switcher : mouse report
+switch_pro --> primary_mouse_switcher : gamepad report
+
+mouse_port --> physical_mouse_port : port state
+joystick_port --> physical_joystick_port : port state
+joystick_port - mouse_port : swap sibling
+
+primary_mouse_switcher --> mouse_switcher1 : mouse report
+primary_mouse_switcher --> autofire2 : gamepad report
+
+primary_joystick_switcher --> mouse_switcher2 : mouse report
+primary_joystick_switcher --> autofire1 : gamepad report
+
+mouse_switcher1 --> mouse_port : mouse port state
+mouse_switcher1 --> joystick_port : wheel port state
+mouse_switcher2 --> joystick_port : mouse port state
+
+autofire1 --> mouse_port : gamepad port state
+autofire2 --> joystick_port : gamepad port state
+
+JoystickMouseSwitcher <|- primary_mouse_switcher
+JoystickMouseSwitcher <|- primary_joystick_switcher
+GamepadAutoFire <|- autofire1
+GamepadAutoFire <|- autofire2
+
+PortSwitcher <|- joystick_port
+PortSwitcher <|- mouse_port
+ControllerPortInterface <|- physical_mouse_port
+ControllerPortInterface <|- physical_joystick_port
+
+MouseModeSwitcher <|-- mouse_switcher1
+MouseModeSwitcher <|-- mouse_switcher2
+
+MouseModeSwitcher -o RunnableMouseReportProcessor
+RunnableMouseReportProcessor --|> AmigaMouse
+RunnableMouseReportProcessor --|> AtariStMouse
+RunnableMouseReportProcessor --|> C1351Converter
+@enduml

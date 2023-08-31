@@ -87,6 +87,10 @@ Keep in mind that an st-link cannot be used with the RP2040, even so both speak 
 
 	openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 20000; program build/yaumataca.elf verify reset exit"
 
+## System architecture
+
+![uml diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/Slamy/Yaumataca/develop/doc/pipeline.plantuml)
+
 ## FAQ
 
 ### Why is this not written in Rust?
