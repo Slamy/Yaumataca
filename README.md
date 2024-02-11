@@ -37,6 +37,9 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 	* No-name controller I had here
 
 ## TODO
+* Fixing random glitches in C1351 simulation
+* Adding C1351 calibration mode and tool
+* Adding secondary fire button for C64
 * HID Descriptor Parsing (generic USB joystick support)
 * Bluetooth (eventually)
 
