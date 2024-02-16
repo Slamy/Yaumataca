@@ -38,6 +38,10 @@ class RightControllerPort : public ControllerPortInterface {
         return "Right/CP1/Mouse";
     }
 
+    size_t get_index() override {
+        return 0;
+    }
+
     /**
      * @brief Returns single instance of this class
      *
@@ -103,6 +107,10 @@ class LeftControllerPort : public ControllerPortInterface {
   public:
     const char *get_name() override {
         return "Left/CP2/Joystick";
+    }
+
+    size_t get_index() override {
+        return 1;
     }
 
     LeftControllerPort(LeftControllerPort const &) = delete;

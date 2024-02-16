@@ -279,4 +279,15 @@ class ControllerPortInterface {
      * @return const char*  The name of the object to identify
      */
     virtual const char *get_name() = 0;
+
+    /**
+     * @brief Get the index of the port.
+     * The indizes are starting at 0 and can
+     * be used to uniquely identify a single port.
+     *
+     * Here it might be only 0 and 1.
+     *
+     * @return const size_t index
+     */
+    virtual size_t get_index() = 0;
 };

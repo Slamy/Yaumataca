@@ -1,5 +1,5 @@
 /**
- * @file hid_handler.hpp
+ * @file default_hid_handler.hpp
  * @author André Zeps
  * @brief
  * @version 0.1

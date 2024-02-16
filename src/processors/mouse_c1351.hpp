@@ -12,10 +12,27 @@
 #pragma once
 
 #include "processors/interfaces.hpp"
+#include "utility.h"
 
 #include "c1351.pio.h"
 #include "hardware/pio.h"
 #include "pico/stdlib.h"
+
+struct C1351CalibrationData {
+    /// @brief clock ticks to add to achieve the most stable timing for a value
+    /// of 64 on POTY
+    int32_t pot_y_64_ = -1452;
+    /// @brief clock ticks to add to achieve the most stable timing for a value
+    /// of 191 on POTY
+    int32_t pot_y_191_ = -1221;
+
+    /// @brief clock ticks to add to achieve the most stable timing for a value
+    /// of 64 on POTX
+    int32_t pot_x_64_ = -1675;
+    /// @brief clock ticks to add to achieve the most stable timing for a value
+    /// of 191 on POTX
+    int32_t pot_x_191_ = -1417;
+};
 
 /**
  * @brief Emulation of the Commodore 1351 in proportional mode.
@@ -71,19 +88,25 @@ class C1351Converter : public RunnableMouseReportProcessor {
     /// @brief number of PIO clock ticks per microsecond
     static constexpr int32_t kDigitPerUs = 125;
 
-    /// @brief clock ticks to add to achieve the most stable timing for a value
-    /// of 64 on POTY
-    float calibration_pot_y_64 = -10 * kDigitPerUs - 190 + 62;
-    /// @brief clock ticks to add to achieve the most stable timing for a value
-    /// of 191 on POTY
-    float calibration_pot_y_191 = -10 * kDigitPerUs + 50 + 62;
+    /// Possible modes this module can operate in
+    enum class OperatingState {
+        kEffective,        ///< Just doing the job it is supposed to do
+        kCalibratePotX64,  ///< Calibrate lower end of usable Pot X range
+        kCalibratePotX191, ///< Calibrate upper end of usable Pot X range
+        kCalibratePotY64,  ///< Calibrate lower end of usable Pot Y range
+        kCalibratePotY191, ///< Calibrate upper end of usable Pot Y range
+    };
 
-    /// @brief clock ticks to add to achieve the most stable timing for a value
-    /// of 64 on POTX
-    float calibration_pot_x_64 = -10 * kDigitPerUs - 190 - 62;
-    /// @brief clock ticks to add to achieve the most stable timing for a value
-    /// of 191 on POTX
-    float calibration_pot_x_191 = -10 * kDigitPerUs + 50 - 62;
+    static std::array<struct C1351CalibrationData, 2> calibration_;
+
+    /// Current active mode
+    OperatingState operating_state_{OperatingState::kEffective};
+
+    /// Time out counter to abort detection of secret button combo
+    uint16_t calibration_mode_enter_timeout_{0};
+    /// Number of correct button presses that are detected until
+    /// now, which would lead to the calibration mode
+    uint8_t calibration_mode_enter_counter_{0};
 
     /**
      * @brief Checks if the PIO state machines can take another value.
@@ -114,16 +137,14 @@ class C1351Converter : public RunnableMouseReportProcessor {
     void push_calibrated_value(int sm, uint32_t pot_value) {
         float x0, y0, x1, y1, xp, yp;
 
-        switch (sm) {
-        case 1:
-            y0 = calibration_pot_y_64;
-            y1 = calibration_pot_y_191;
-            break;
-        case 0:
-        default:
-            y0 = calibration_pot_x_64;
-            y1 = calibration_pot_x_191;
-            break;
+        struct C1351CalibrationData &calib = calibration_.at(target_->get_index());
+
+        if (sm == sm_y_) {
+            y0 = static_cast<float>(calib.pot_y_64_);
+            y1 = static_cast<float>(calib.pot_y_191_);
+        } else {
+            y0 = static_cast<float>(calib.pot_x_64_);
+            y1 = static_cast<float>(calib.pot_x_191_);
         }
 
         xp = static_cast<float>(pot_value);
@@ -153,7 +174,11 @@ class C1351Converter : public RunnableMouseReportProcessor {
      */
     uint32_t values_pushed_cnt_{0};
 
+    static void save_calibration_data();
+
   public:
+    static void load_calibration_data();
+
     C1351Converter() {
         PRINTF("C1351Converter +\n");
     }
@@ -203,13 +228,127 @@ class C1351Converter : public RunnableMouseReportProcessor {
         offset_ = pio_add_program(pio_, &sid_adc_stim_program);
     }
 
+    /**
+     * @brief Detects button combination for entering calibration mode
+     *
+     * Detects the button combination of mouse buttons LLRRRL
+     * without much mouse cursor movement in between.
+     *
+     * @return true
+     * @return false
+     */
+    bool check_calibration_mode_enter_criteria() {
+
+        // How many times was this function called
+        // without progressing the state machine?
+        // Decrease calibration_mode_enter_timeout_ each
+        // time and abort the detection of the button
+        // combination.
+        if (calibration_mode_enter_timeout_) {
+            calibration_mode_enter_timeout_--;
+            if (calibration_mode_enter_timeout_ == 0) {
+                calibration_mode_enter_counter_ = 0;
+            }
+        }
+
+        switch (calibration_mode_enter_counter_) {
+        case 0:
+        case 1:
+            if (state_.fire1 && !last_state_.fire1) {
+                PRINTF("Calib up!\n");
+                calibration_mode_enter_counter_++;
+                calibration_mode_enter_timeout_ = 5;
+            }
+
+            if (state_.up && !last_state_.up) {
+                // PRINTF("Calib force down!\n");
+                calibration_mode_enter_counter_ = 0;
+            }
+            break;
+        case 2:
+        case 3:
+        case 4:
+            if (state_.up && !last_state_.up) {
+                calibration_mode_enter_counter_++;
+                calibration_mode_enter_timeout_ = 5;
+            }
+
+            if (state_.fire1 && !last_state_.fire1) {
+                PRINTF("Calib force down!\n");
+                calibration_mode_enter_counter_ = 0;
+            }
+            break;
+        case 5:
+            if (state_.down && !last_state_.down) {
+                calibration_mode_enter_counter_ = 0;
+                // Full combination detected
+                return true;
+            }
+
+            if (state_.up && !last_state_.up) {
+                PRINTF("Calib force down!\n");
+                calibration_mode_enter_counter_ = 0;
+            }
+            break;
+        }
+
+        return false;
+    }
+
     void process_mouse_report(MouseReport &mouse_report) override {
-
-        mouse_accumulator_x += mouse_report.relx;
-        mouse_accumulator_y -= mouse_report.rely;
-
         state_.fire1 = mouse_report.left;
         state_.up = mouse_report.right;
+        state_.down = mouse_report.middle;
+
+        struct C1351CalibrationData &calib = calibration_.at(target_->get_index());
+
+        switch (operating_state_) {
+        case OperatingState::kEffective:
+            mouse_accumulator_x += mouse_report.relx;
+            mouse_accumulator_y -= mouse_report.rely;
+            if (check_calibration_mode_enter_criteria()) {
+                operating_state_ = OperatingState::kCalibratePotX64;
+                PRINTF("To kCalibratePotX64\n");
+            }
+            break;
+        case OperatingState::kCalibratePotX64:
+            calib.pot_x_64_ += mouse_report.relx;
+            if (state_.fire1 && !last_state_.fire1) {
+                operating_state_ = OperatingState::kCalibratePotX191;
+                PRINTF("To kCalibratePotX191\n");
+            }
+            break;
+        case OperatingState::kCalibratePotX191:
+            calib.pot_x_191_ += mouse_report.relx;
+            if (state_.fire1 && !last_state_.fire1) {
+                operating_state_ = OperatingState::kCalibratePotY64;
+                PRINTF("To kCalibratePotY64\n");
+            }
+            break;
+        case OperatingState::kCalibratePotY64:
+            calib.pot_y_64_ += mouse_report.relx;
+            if (state_.fire1 && !last_state_.fire1) {
+                operating_state_ = OperatingState::kCalibratePotY191;
+                PRINTF("To kCalibratePotY191\n");
+            }
+            break;
+        case OperatingState::kCalibratePotY191:
+            calib.pot_y_191_ += mouse_report.relx;
+            if (state_.fire1 && !last_state_.fire1) {
+                operating_state_ = OperatingState::kEffective;
+                PRINTF("Calibration finished! %ld %ld %ld %ld\n", calib.pot_x_64_, calib.pot_x_191_, calib.pot_y_64_,
+                       calib.pot_y_191_);
+                save_calibration_data();
+            }
+            break;
+        }
+
+        // Right mouse button to abort
+        if (operating_state_ != OperatingState::kEffective && state_.up && !last_state_.up) {
+            PRINTF("Aborted calibration\n");
+            operating_state_ = OperatingState::kEffective;
+            load_calibration_data();
+        }
 
         if (target_ && last_state_ != state_) {
             last_state_ = state_;
@@ -222,17 +361,19 @@ class C1351Converter : public RunnableMouseReportProcessor {
      *
      * The SID has a measuring cycle of 512 microsecond for the
      * POT X and Y pins. The range of values is 64 as explained in \ref
-     * C1351Converter::push_calibrated_value. This would mean that it should be
-     * possible to have a diff of 30 between measurement cycles. This is not the
-     * case at least with "THE FINAL CARTRIDGE III" as the reading frequency of
-     * POT X and Y from the software is much lower than what the SID can do.
+     * C1351Converter::push_calibrated_value. This would mean that it should
+     * be possible to have a diff of 30 between measurement cycles. This is
+     * not the case at least with "THE FINAL CARTRIDGE III" as the reading
+     * frequency of POT X and Y from the software is much lower than what
+     * the SID can do.
      *
      * I tried to solve this here by limiting the amount of change for every
-     * measuring cycle to 2. This would mean that the change is limited to 40
-     * per frame, assuming that a frame takes 20 milliseconds.
-     * Without the noise bit this would mean the change is limited to 20 per
-     * frame. This is weird because I would assume that 30 must be possible as
-     * well, but 3 is too much for "DESKTOP V1.0" of "THE FINAL CARTRIDGE III".
+     * measuring cycle to 2. This would mean that the change is limited to
+     * 40 per frame, assuming that a frame takes 20 milliseconds. Without
+     * the noise bit this would mean the change is limited to 20 per frame.
+     * This is weird because I would assume that 30 must be possible as
+     * well, but 3 is too much for "DESKTOP V1.0" of "THE FINAL CARTRIDGE
+     * III".
      *
      * Then let's go for a fraction here. 2 times out of 8 it is 3, else 2.
      * This limits it to 2.25 which seems to be fine with "DESKTOP V1.0"
@@ -241,21 +382,49 @@ class C1351Converter : public RunnableMouseReportProcessor {
      * software.
      */
     void run() override {
+        static constexpr uint8_t kNotCalibratedChanValue{25};
+
         if (pio_fifos_can_take_values()) {
-            int32_t kMaxChange = (values_pushed_cnt_ % 8) > 3 ? 2 : 1; // 1.5 per cycle
 
-            values_pushed_cnt_++;
+            switch (operating_state_) {
+            case OperatingState::kEffective: {
+                int32_t kMaxChange = (values_pushed_cnt_ % 8) > 3 ? 2 : 1; // 1.5 per cycle
 
-            int32_t inc_x = std::max(-kMaxChange, std::min(mouse_accumulator_x, kMaxChange));
-            int32_t inc_y = std::max(-kMaxChange, std::min(mouse_accumulator_y, kMaxChange));
+                values_pushed_cnt_++;
 
-            mouse_accumulator_x -= inc_x;
-            mouse_accumulator_y -= inc_y;
-            value_pot_x_ += inc_x;
-            value_pot_y_ += inc_y;
+                int32_t inc_x = std::max(-kMaxChange, std::min(mouse_accumulator_x, kMaxChange));
+                int32_t inc_y = std::max(-kMaxChange, std::min(mouse_accumulator_y, kMaxChange));
 
-            push_calibrated_value(sm_x_, (value_pot_x_ % 128) + 64);
-            push_calibrated_value(sm_y_, (value_pot_y_ % 128) + 64);
+                mouse_accumulator_x -= inc_x;
+                mouse_accumulator_y -= inc_y;
+                value_pot_x_ += inc_x;
+                value_pot_y_ += inc_y;
+
+                push_calibrated_value(sm_x_, (value_pot_x_ % 128) + 64);
+                push_calibrated_value(sm_y_, (value_pot_y_ % 128) + 64);
+                break;
+            }
+            case OperatingState::kCalibratePotX64: {
+                push_calibrated_value(sm_x_, 64);
+                push_calibrated_value(sm_y_, kNotCalibratedChanValue);
+                break;
+            }
+            case OperatingState::kCalibratePotX191: {
+                push_calibrated_value(sm_x_, 191);
+                push_calibrated_value(sm_y_, kNotCalibratedChanValue);
+                break;
+            }
+            case OperatingState::kCalibratePotY64: {
+                push_calibrated_value(sm_x_, kNotCalibratedChanValue);
+                push_calibrated_value(sm_y_, 64);
+                break;
+            }
+            case OperatingState::kCalibratePotY191: {
+                push_calibrated_value(sm_x_, kNotCalibratedChanValue);
+                push_calibrated_value(sm_y_, 191);
+                break;
+            }
+            }
         }
     }
 };

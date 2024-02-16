@@ -1,5 +1,5 @@
 /**
- * @file bare_app.cpp
+ * @file bare_api.cpp
  * @author André Zeps
  * @brief
  * @version 0.1

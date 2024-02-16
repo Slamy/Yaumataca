@@ -27,6 +27,7 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 * Automatic switch between mouses and joysticks
 * Swap of controller ports (useful for C64 games)
 * Supports 2 mouses and 2 joysticks (useful for Lemmings and Marble Madness)
+* Supports secondary fire button (Amiga and C64 style)
 * Auto fire
 * Configured mouse type is saved in flash
 
@@ -39,10 +40,7 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 	* No-name controller I had here
 
 ## TODO
-* Fixing random glitches in C1351 simulation
-* Adding C1351 calibration mode and tool
-* Adding secondary fire button for C64
-* HID Descriptor Parsing (generic USB joystick support)
+* HID Descriptor Parsing (generic USB joystick support, eventually)
 * Bluetooth (eventually)
 
 ## How to construct

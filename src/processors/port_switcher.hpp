@@ -87,4 +87,8 @@ class PortSwitcher : public ControllerPortInterface {
     const char *get_name() override {
         return target_->get_name();
     }
+
+    size_t get_index() override {
+        return target_->get_index();
+    }
 };

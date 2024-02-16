@@ -1,5 +1,5 @@
 /**
- * @file hid_app.cpp
+ * @file hid_api.cpp
  * @author André Zeps
  * @brief
  * @version 0.1

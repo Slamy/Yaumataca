@@ -49,7 +49,15 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
     /// @brief Called when select button sis held for some time
     std::function<void()> swap_callback_;
 
+    bool c64_mode_{false};
+
   public:
+    void set_c64_mode(bool m) {
+        c64_mode_ = m;
+        // enforce writing the state
+        last_out_state_.all_buttons = 0xff;
+    }
+
     GamepadAutoFire() {
         PRINTF("GamepadAutoFire +\n");
     }
@@ -104,7 +112,12 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
             out_state_.fire1 = in_state_.fire;
         }
 
-        out_state_.fire2 = in_state_.sec_fire;
+        if (c64_mode_) {
+            out_state_.fire2 = !in_state_.sec_fire;
+        } else {
+            out_state_.fire2 = in_state_.sec_fire;
+        }
+        out_state_.fire3 = 0;
         out_state_.up = in_state_.up;
         out_state_.down = in_state_.down;
         out_state_.left = in_state_.left;
@@ -118,5 +131,7 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
 
     void ensure_joystick_muxing() override {
         target_->configure_gpios();
+        // enforce writing the state
+        last_out_state_.all_buttons = 0xff;
     }
 };

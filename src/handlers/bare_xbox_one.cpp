@@ -41,6 +41,7 @@ struct __attribute__((packed)) XboxOneButtonData {
 void c_report_received(tuh_xfer_t *xfer);
 
 void configure_finished_received(tuh_xfer_t *xfer) {
+    std::ignore = xfer;
     PRINTF("configure_finished_received %d\r\n", xfer->result);
 }
 
@@ -119,6 +120,8 @@ void XboxOneHandler::open_vendor_interface(uint8_t daddr, tusb_desc_interface_t 
 
                 // submit transfer for this EP
                 bool result = tuh_edpt_xfer(&xfer);
+                std::ignore = result; // TODO proper error handling
+
                 PRINTF("in %d\r\n", result);
             }
             if (tu_edpt_dir(desc_ep->bEndpointAddress) == TUSB_DIR_OUT) {
@@ -146,6 +149,8 @@ void XboxOneHandler::open_vendor_interface(uint8_t daddr, tusb_desc_interface_t 
 
                 // submit transfer for this EP
                 bool result = tuh_edpt_xfer(&xfer);
+                std::ignore = result; // TODO proper error handling
+
                 PRINTF("out %d\r\n", result);
             }
         }

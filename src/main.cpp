@@ -44,6 +44,7 @@ int main() {
     // init host stack on configured roothub port
     tuh_init(BOARD_TUH_RHPORT);
 
+    C1351Converter::load_calibration_data();
     C1351Converter::setup_pio();
 
     for (;;) {

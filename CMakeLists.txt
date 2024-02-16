@@ -36,6 +36,7 @@ target_sources(${PROJECT} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_ps3.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_ps4.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/processors/mouse_c1351.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/bare_xbox_one.cpp
 )
 

@@ -17,3 +17,7 @@ static inline uint32_t board_micros(void) {
 /// via Flash EEPROM emulation
 /// Must be dividable by 4096 which is the Flash erase sector size
 static constexpr uint32_t kFlashMouseModeOffset{0x40000};
+
+/// Address in flash where the C1351 emulation calibration data is stored
+/// Must be dividable by 4096 which is the Flash erase sector size
+static constexpr uint32_t kFlashCalibrationDataOffset{0x41000};
