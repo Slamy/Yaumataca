@@ -56,8 +56,12 @@ class MouseModeSwitcher : public RunnableMouseReportProcessor {
         swap_callback_ = swap_callback;
     }
 
-    MouseModeSwitcher() { PRINTF("MouseModeSwitcher +\n"); }
-    virtual ~MouseModeSwitcher() { PRINTF("MouseModeSwitcher -\n"); }
+    MouseModeSwitcher() {
+        PRINTF("MouseModeSwitcher +\n");
+    }
+    virtual ~MouseModeSwitcher() {
+        PRINTF("MouseModeSwitcher -\n");
+    }
 
     /// @brief Destination of mouse buttons and quadrature signals
     std::shared_ptr<ControllerPortInterface> mouse_target_;
@@ -67,7 +71,9 @@ class MouseModeSwitcher : public RunnableMouseReportProcessor {
 
     /// @brief Provides number of mouse types supported
     /// @return number of mouse types
-    static int number_modes() { return 3; }
+    static int number_modes() {
+        return 3;
+    }
 
     /**
      * @brief Sets a type of mouse
@@ -101,12 +107,13 @@ class MouseModeSwitcher : public RunnableMouseReportProcessor {
         }
     }
 
-    void ensure_mouse_muxing() override { impl_->ensure_mouse_muxing(); }
+    void ensure_mouse_muxing() override {
+        impl_->ensure_mouse_muxing();
+    }
 
     void process_mouse_report(MouseReport &mouse_report) override {
 
-        bool swap_combi =
-            (mouse_report.left && mouse_report.middle && mouse_report.right);
+        bool swap_combi = (mouse_report.left && mouse_report.middle && mouse_report.right);
 
         if (!swap_combination_pressed_ && swap_combi) {
             swap_press_start_time = board_millis();

@@ -45,7 +45,9 @@ class QuadratureEncoder {
      *
      * @return int32_t Movement to perform in the future
      */
-    int32_t accumulator() { return accumulator_; }
+    int32_t accumulator() {
+        return accumulator_;
+    }
 
     /**
      * @brief Step quadrature signals into direction of accumulator

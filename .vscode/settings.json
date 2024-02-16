@@ -82,7 +82,8 @@
         "cstdbool": "cpp",
         "netfwd": "cpp",
         "coroutine": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "stdint.h": "c"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/arm-none-eabi-gcc",
     "editor.formatOnSave": true,

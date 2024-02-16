@@ -28,13 +28,16 @@
  */
 class RightControllerPort : public ControllerPortInterface {
   private:
-    RightControllerPort() {}
+    RightControllerPort() {
+    }
 
   public:
     RightControllerPort(RightControllerPort const &) = delete;
     void operator=(RightControllerPort const &) = delete;
 
-    const char *get_name() override { return "Right/CP1/Mouse"; }
+    const char *get_name() override {
+        return "Right/CP1/Mouse";
+    }
 
     /**
      * @brief Returns single instance of this class
@@ -47,9 +50,15 @@ class RightControllerPort : public ControllerPortInterface {
         return std::move(instance);
     }
 
-    uint get_pot_x_drain_gpio() override { return 7; }
-    uint get_pot_y_drain_gpio() override { return 11; }
-    uint get_pot_y_sense_gpio() override { return 13; }
+    uint get_pot_x_drain_gpio() override {
+        return 7;
+    }
+    uint get_pot_y_drain_gpio() override {
+        return 11;
+    }
+    uint get_pot_y_sense_gpio() override {
+        return 13;
+    }
 
     void configure_gpios() override {
         const uint drain_pins[] = {7, 9, 10, 11, 12, 14, 15};
@@ -77,8 +86,8 @@ class RightControllerPort : public ControllerPortInterface {
         gpio_put(12, state.left);
         gpio_put(10, state.right);
 
-        PRINTF("R %d%d%d%d %d%d%d\n", state.left, state.up, state.down,
-               state.right, state.fire1, state.fire2, state.fire3);
+        PRINTF("R %d%d%d%d %d%d%d\n", state.left, state.up, state.down, state.right, state.fire1, state.fire2,
+               state.fire3);
     }
 };
 
@@ -89,10 +98,13 @@ class RightControllerPort : public ControllerPortInterface {
  */
 class LeftControllerPort : public ControllerPortInterface {
   private:
-    LeftControllerPort() {}
+    LeftControllerPort() {
+    }
 
   public:
-    const char *get_name() override { return "Left/CP2/Joystick"; }
+    const char *get_name() override {
+        return "Left/CP2/Joystick";
+    }
 
     LeftControllerPort(LeftControllerPort const &) = delete;
     void operator=(LeftControllerPort const &) = delete;
@@ -108,9 +120,15 @@ class LeftControllerPort : public ControllerPortInterface {
         return std::move(instance);
     }
 
-    uint get_pot_x_drain_gpio() override { return 6; }
-    uint get_pot_y_drain_gpio() override { return 5; }
-    uint get_pot_y_sense_gpio() override { return 8; }
+    uint get_pot_x_drain_gpio() override {
+        return 6;
+    }
+    uint get_pot_y_drain_gpio() override {
+        return 5;
+    }
+    uint get_pot_y_sense_gpio() override {
+        return 8;
+    }
 
     void configure_gpios() override {
         const uint drain_pins[] = {0, 1, 2, 3, 4, 5, 6};
@@ -139,7 +157,7 @@ class LeftControllerPort : public ControllerPortInterface {
         gpio_put(5, state.fire3); // Also used as Pot Y
         gpio_put(6, state.fire2); // Also used as Pot X
 
-        PRINTF("L %d%d%d%d %d%d%d\n", state.left, state.up, state.down,
-               state.right, state.fire1, state.fire2, state.fire3);
+        PRINTF("L %d%d%d%d %d%d%d\n", state.left, state.up, state.down, state.right, state.fire1, state.fire2,
+               state.fire3);
     }
 };

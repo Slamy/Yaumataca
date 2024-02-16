@@ -26,8 +26,7 @@ class LedPatternGenerator : public Runnable {
     /// 2 long blinks with an equally long pause
     static constexpr uint16_t blink_2long[] = {200, 200, 200, 50};
     /// 4 short blinks with long pauses
-    static constexpr uint16_t blink_4short[] = {50, 200, 50, 200,
-                                                50, 200, 50, 50};
+    static constexpr uint16_t blink_4short[] = {50, 200, 50, 200, 50, 200, 50, 50};
     /// 3 short blinks with long pauses
     static constexpr uint16_t blink_3short[] = {50, 250, 50, 250, 50, 50};
     /// looks like the character R is morsed
@@ -37,9 +36,8 @@ class LedPatternGenerator : public Runnable {
 
     /// @brief Collection of all blinking patterns
     std::span<const uint16_t> variants[5] = {
-        std::span(blink_2long),   std::span(blink_4short),
-        std::span(blink_1short),  std::span(blink_3short),
-        std::span(blink_morse_r),
+        std::span(blink_2long),  std::span(blink_4short),  std::span(blink_1short),
+        std::span(blink_3short), std::span(blink_morse_r),
     };
 
     /// @brief currently selected blinking pattern
@@ -64,12 +62,15 @@ class LedPatternGenerator : public Runnable {
         k3Short,
         kMorseR,
     };
-    LedPatternGenerator() {}
+    LedPatternGenerator() {
+    }
 
     /**
      * @brief Returns true if blinking pattern is active
      */
-    bool active() { return active_; }
+    bool active() {
+        return active_;
+    }
 
     /**
      * @brief Starts an LED blinking pattern

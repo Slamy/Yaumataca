@@ -233,17 +233,18 @@ class SwitchProHandler : public DefaultHidHandler {
     };
 
   public:
-    SwitchProHandler() { last_command_sent_ = board_millis(); }
+    SwitchProHandler() {
+        last_command_sent_ = board_millis();
+    }
     void process_report(std::span<const uint8_t> d) override {
 
         auto dat = reinterpret_cast<const SwitchProData *>(d.data());
 
+#if 0
+
         PRINTF("Switch: %d %d %d %d %d%d%d%d\n", dat->leftHatX, dat->leftHatY,
                dat->rightHatX, dat->rightHatY, dat->btn.dpad_down,
                dat->btn.dpad_up, dat->btn.dpad_left, dat->btn.dpad_right);
-
-#if 0
-
         for (uint8_t i : d) {
             PRINTF(" %02x", i);
         }
@@ -253,14 +254,10 @@ class SwitchProHandler : public DefaultHidHandler {
         GamepadReport aj;
 
         if (dat->input_report_id == PROCON_REPORT_INPUT_FULL) {
-            aj.left = dat->btn.dpad_left ||
-                      dat->leftHatX < (kAnalogCenter - kAnalogThreshold);
-            aj.right = dat->btn.dpad_right ||
-                       dat->leftHatX > (kAnalogCenter + kAnalogThreshold);
-            aj.up = dat->btn.dpad_up ||
-                    dat->leftHatY > (kAnalogCenter + kAnalogThreshold);
-            aj.down = dat->btn.dpad_down ||
-                      dat->leftHatY < (kAnalogCenter - kAnalogThreshold);
+            aj.left = dat->btn.dpad_left || dat->leftHatX < (kAnalogCenter - kAnalogThreshold);
+            aj.right = dat->btn.dpad_right || dat->leftHatX > (kAnalogCenter + kAnalogThreshold);
+            aj.up = dat->btn.dpad_up || dat->leftHatY > (kAnalogCenter + kAnalogThreshold);
+            aj.down = dat->btn.dpad_down || dat->leftHatY < (kAnalogCenter - kAnalogThreshold);
 
             aj.fire = dat->btn.y;
             aj.sec_fire = dat->btn.x;
@@ -289,9 +286,10 @@ class SwitchProHandler : public DefaultHidHandler {
         instance_ = instance;
     }
 
-    ReportType expected_report() override { return kGamePad; }
+    ReportType expected_report() override {
+        return kGamePad;
+    }
 };
 
 static HidHandlerBuilder builder(
-    0x057e, 0x2009, []() { return std::make_unique<SwitchProHandler>(); },
-    nullptr);
+    0x057e, 0x2009, []() { return std::make_unique<SwitchProHandler>(); }, nullptr);

@@ -64,9 +64,7 @@ class HidHandlerBuilder {
     std::function<std::unique_ptr<HidHandlerInterface>()> make_;
     /// @brief Lambda function to check for a matching handler via hid report
     /// info
-    std::function<std::unique_ptr<HidHandlerInterface>(
-        tuh_hid_report_info_t *info)>
-        custom_matcher_;
+    std::function<std::unique_ptr<HidHandlerInterface>(tuh_hid_report_info_t *info)> custom_matcher_;
 
     /**
      * @brief Checks if VID and PID do match. Returns implementation if
@@ -97,12 +95,8 @@ class HidHandlerBuilder {
      * @param custom_matcher    Lambda function to check for a matching handler
      * via hid report info
      */
-    HidHandlerBuilder(
-        uint16_t vid, uint16_t pid,
-        std::function<std::unique_ptr<HidHandlerInterface>()> make,
-        std::function<
-            std::unique_ptr<HidHandlerInterface>(tuh_hid_report_info_t *info)>
-            custom_matcher)
+    HidHandlerBuilder(uint16_t vid, uint16_t pid, std::function<std::unique_ptr<HidHandlerInterface>()> make,
+                      std::function<std::unique_ptr<HidHandlerInterface>(tuh_hid_report_info_t *info)> custom_matcher)
         : vid_(vid), pid_(pid), make_(make), custom_matcher_(custom_matcher) {
         builders_.push_back(this);
     }
@@ -118,8 +112,7 @@ class HidHandlerBuilder {
      * @param info Additional HID Report info
      * @return std::unique_ptr<HidHandlerInterface>
      */
-    static std::unique_ptr<HidHandlerInterface>
-    find(uint16_t vid, uint16_t pid, tuh_hid_report_info_t *info) {
+    static std::unique_ptr<HidHandlerInterface> find(uint16_t vid, uint16_t pid, tuh_hid_report_info_t *info) {
         std::unique_ptr<HidHandlerInterface> ptr;
 
         // Try to match first with VID and PID

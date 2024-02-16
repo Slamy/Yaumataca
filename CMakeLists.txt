@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 3.17)
 
 message (STATUS "CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
 
-if ( CMAKE_BUILD_TYPE STREQUAL "Debug")
+option(CONFIG_DEBUG_PRINT "Activate debug prints on RTT")
+
+if (CONFIG_DEBUG_PRINT)
   set (LOGGER "RTT")
   message (STATUS "RTT logger active")
+  add_definitions(-DDEBUG_PRINT)
 else()
   message (STATUS "No RTT")
 endif()

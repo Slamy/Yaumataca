@@ -33,8 +33,7 @@ static struct {
 static std::unique_ptr<Pipeline> pipeline;
 
 void hid_app_init() {
-    pipeline = std::make_unique<Pipeline>(LeftControllerPort::getInstance(),
-                                          RightControllerPort::getInstance());
+    pipeline = std::make_unique<Pipeline>(LeftControllerPort::getInstance(), RightControllerPort::getInstance());
 }
 void hid_app_task() {
     pipeline->run();
@@ -70,24 +69,20 @@ void hid_app_task() {
  *
  */
 
-void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance,
-                      uint8_t const *desc_report, uint16_t desc_len) {
+void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance, uint8_t const *desc_report, uint16_t desc_len) {
     uint16_t vid, pid;
     tuh_vid_pid_get(dev_addr, &vid, &pid);
 
-    PRINTF("HID device address = %d, instance = %d is mounted\n", dev_addr,
-           instance);
+    PRINTF("HID device address = %d, instance = %d is mounted\n", dev_addr, instance);
     PRINTF("VID = %04x, PID = %04x\n", vid, pid);
 
-    hid_info[instance].report_count = tuh_hid_parse_report_descriptor(
-        hid_info[instance].report_info, MAX_REPORT, desc_report, desc_len);
+    hid_info[instance].report_count =
+        tuh_hid_parse_report_descriptor(hid_info[instance].report_info, MAX_REPORT, desc_report, desc_len);
     PRINTF("HID has %u reports %d %d %d\n", hid_info[instance].report_count,
-           hid_info[instance].report_info[0].report_id,
-           hid_info[instance].report_info[0].usage,
+           hid_info[instance].report_info[0].report_id, hid_info[instance].report_info[0].usage,
            hid_info[instance].report_info[0].usage_page);
 
-    hid_info[instance].handler =
-        HidHandlerBuilder::find(vid, pid, hid_info[instance].report_info);
+    hid_info[instance].handler = HidHandlerBuilder::find(vid, pid, hid_info[instance].report_info);
 
     if (hid_info[instance].handler) {
         pipeline->integrate_handler(hid_info[instance].handler);
@@ -113,8 +108,7 @@ void tuh_hid_umount_cb(uint8_t dev_addr, uint8_t instance) {
 
     std::ignore = dev_addr;
 
-    PRINTF("HID device address = %d, instance = %d is unmounted\n", dev_addr,
-           instance);
+    PRINTF("HID device address = %d, instance = %d is unmounted\n", dev_addr, instance);
 
     hid_info[instance].handler.reset();
 }
@@ -144,12 +138,10 @@ void print_generic_report(uint8_t const *d, uint16_t len) {
  * @param report Raw report data
  * @param len Length of report in bytes
  */
-void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance,
-                                uint8_t const *report, uint16_t len) {
+void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance, uint8_t const *report, uint16_t len) {
 
     if (hid_info[instance].handler) {
-        hid_info[instance].handler.get()->process_report(
-            std::span(report, len));
+        hid_info[instance].handler.get()->process_report(std::span(report, len));
     } else {
         print_generic_report(report, len);
     }
@@ -167,8 +159,7 @@ void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance,
  * @param idx
  * @param len
  */
-void tuh_hid_report_sent_cb(uint8_t dev_addr, uint8_t idx, uint8_t const *,
-                            uint16_t len) {
+void tuh_hid_report_sent_cb(uint8_t dev_addr, uint8_t idx, uint8_t const *, uint16_t len) {
     std::ignore = len;
     std::ignore = dev_addr;
     std::ignore = idx;
@@ -186,8 +177,7 @@ void tuh_hid_report_sent_cb(uint8_t dev_addr, uint8_t idx, uint8_t const *,
  * @param report_type
  * @param len
  */
-void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx,
-                                    uint8_t report_id, uint8_t report_type,
+void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx, uint8_t report_id, uint8_t report_type,
                                     uint16_t len) {
 
     std::ignore = dev_addr;
@@ -196,8 +186,7 @@ void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx,
     std::ignore = report_type;
     std::ignore = len;
 
-    PRINTF("tuh_hid_set_report_complete_cb %d %d %d %d %d\n", dev_addr, idx,
-           report_id, report_type, len);
+    PRINTF("tuh_hid_set_report_complete_cb %d %d %d %d %d\n", dev_addr, idx, report_id, report_type, len);
 }
 
 /**
@@ -207,12 +196,10 @@ void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx,
  * @param idx
  * @param protocol
  */
-void tuh_hid_set_protocol_complete_cb(uint8_t dev_addr, uint8_t idx,
-                                      uint8_t protocol) {
+void tuh_hid_set_protocol_complete_cb(uint8_t dev_addr, uint8_t idx, uint8_t protocol) {
     std::ignore = dev_addr;
     std::ignore = idx;
     std::ignore = protocol;
 
-    PRINTF("tuh_hid_set_protocol_complete_cb %d %d   %d\n", dev_addr, idx,
-           protocol);
+    PRINTF("tuh_hid_set_protocol_complete_cb %d %d   %d\n", dev_addr, idx, protocol);
 }

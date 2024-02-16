@@ -35,8 +35,12 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     std::weak_ptr<HidHandlerInterface> joystick_source_;
 
   public:
-    JoystickMouseSwitcher() { PRINTF("JoystickMouseSwitcher +\n"); }
-    virtual ~JoystickMouseSwitcher() { PRINTF("JoystickMouseSwitcher -\n"); }
+    JoystickMouseSwitcher() {
+        PRINTF("JoystickMouseSwitcher +\n");
+    }
+    virtual ~JoystickMouseSwitcher() {
+        PRINTF("JoystickMouseSwitcher -\n");
+    }
 
     /// @brief Sink for mouse reports
     std::shared_ptr<RunnableMouseReportProcessor> mouse_target_;
@@ -45,10 +49,14 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     std::shared_ptr<RunnableGamepadReportProcessor> gamepad_target_;
 
     /// @brief Returns true if no mouse source is registered
-    bool mouse_source_empty() { return mouse_source_.expired(); }
+    bool mouse_source_empty() {
+        return mouse_source_.expired();
+    }
 
     /// @brief Returns true if no joystick source is registered
-    bool joystick_source_empty() { return joystick_source_.expired(); }
+    bool joystick_source_empty() {
+        return joystick_source_.expired();
+    }
 
     void register_source(std::shared_ptr<HidHandlerInterface> source) override {
         switch (source->expected_report()) {
@@ -75,8 +83,7 @@ class JoystickMouseSwitcher : public ReportHubInterface {
 
     void process_mouse_report(MouseReport &report) override {
 
-        if (((labs(report.relx) > kMouseChangeThreshold) ||
-             (labs(report.rely) > kMouseChangeThreshold) ||
+        if (((labs(report.relx) > kMouseChangeThreshold) || (labs(report.rely) > kMouseChangeThreshold) ||
              report.button_pressed) &&
             active_ != kMouse) {
             PRINTF("Switched to mouse\n");

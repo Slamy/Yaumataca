@@ -70,8 +70,7 @@ extern "C" {
 
 #define CFG_TUH_HUB 4
 #define CFG_TUH_CDC 0
-#define CFG_TUH_HID                                                            \
-    4 // typical keyboard + mouse device can have 3-4 HID interfaces
+#define CFG_TUH_HID 4 // typical keyboard + mouse device can have 3-4 HID interfaces
 #define CFG_TUH_MSC 0
 #define CFG_TUH_VENDOR 0
 

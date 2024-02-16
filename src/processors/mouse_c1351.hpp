@@ -95,8 +95,7 @@ class C1351Converter : public RunnableMouseReportProcessor {
      * @return false Wait another round
      */
     bool pio_fifos_can_take_values() {
-        return pio_sm_is_tx_fifo_empty(pio_, sm_y_) &&
-               pio_sm_is_tx_fifo_empty(pio_, sm_x_);
+        return pio_sm_is_tx_fifo_empty(pio_, sm_y_) && pio_sm_is_tx_fifo_empty(pio_, sm_x_);
     }
 
     /**
@@ -134,8 +133,7 @@ class C1351Converter : public RunnableMouseReportProcessor {
 
         int32_t calibration = static_cast<int32_t>(yp);
 
-        pio_sm_put(pio_, sm,
-                   (kDrainLength + pot_value) * kDigitPerUs + calibration);
+        pio_sm_put(pio_, sm, (kDrainLength + pot_value) * kDigitPerUs + calibration);
     }
 
     /// @brief  data sink for mouse button presses
@@ -156,8 +154,12 @@ class C1351Converter : public RunnableMouseReportProcessor {
     uint32_t values_pushed_cnt_{0};
 
   public:
-    C1351Converter() { PRINTF("C1351Converter +\n"); }
-    virtual ~C1351Converter() { PRINTF("C1351Converter -\n"); }
+    C1351Converter() {
+        PRINTF("C1351Converter +\n");
+    }
+    virtual ~C1351Converter() {
+        PRINTF("C1351Converter -\n");
+    }
 
     /**
      * @brief Registers a data sink for mouse button clicks.
@@ -168,7 +170,9 @@ class C1351Converter : public RunnableMouseReportProcessor {
      *
      * @param t     implementation of a controller port
      */
-    void set_target(std::shared_ptr<ControllerPortInterface> t) { target_ = t; }
+    void set_target(std::shared_ptr<ControllerPortInterface> t) {
+        target_ = t;
+    }
 
     void ensure_mouse_muxing() override {
         if (target_->get_pot_y_sense_gpio() == 8) {
@@ -181,11 +185,9 @@ class C1351Converter : public RunnableMouseReportProcessor {
         pio_sm_set_enabled(pio_, sm_x_, false);
         pio_sm_set_enabled(pio_, sm_y_, false);
 
-        sid_adc_stim_program_init(pio_, sm_x_, offset_,
-                                  target_->get_pot_y_sense_gpio(),
+        sid_adc_stim_program_init(pio_, sm_x_, offset_, target_->get_pot_y_sense_gpio(),
                                   target_->get_pot_x_drain_gpio());
-        sid_adc_stim_program_init(pio_, sm_y_, offset_,
-                                  target_->get_pot_y_sense_gpio(),
+        sid_adc_stim_program_init(pio_, sm_y_, offset_, target_->get_pot_y_sense_gpio(),
                                   target_->get_pot_y_drain_gpio());
 
         PRINTF("Enable C1351 for %s port\n", target_->get_name());
@@ -240,15 +242,12 @@ class C1351Converter : public RunnableMouseReportProcessor {
      */
     void run() override {
         if (pio_fifos_can_take_values()) {
-            int32_t kMaxChange =
-                (values_pushed_cnt_ % 8) > 3 ? 2 : 1; // 1.5 per cycle
+            int32_t kMaxChange = (values_pushed_cnt_ % 8) > 3 ? 2 : 1; // 1.5 per cycle
 
             values_pushed_cnt_++;
 
-            int32_t inc_x = std::max(-kMaxChange,
-                                     std::min(mouse_accumulator_x, kMaxChange));
-            int32_t inc_y = std::max(-kMaxChange,
-                                     std::min(mouse_accumulator_y, kMaxChange));
+            int32_t inc_x = std::max(-kMaxChange, std::min(mouse_accumulator_x, kMaxChange));
+            int32_t inc_y = std::max(-kMaxChange, std::min(mouse_accumulator_y, kMaxChange));
 
             mouse_accumulator_x -= inc_x;
             mouse_accumulator_y -= inc_y;

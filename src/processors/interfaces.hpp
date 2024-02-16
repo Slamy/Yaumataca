@@ -100,8 +100,7 @@ struct ControllerPortState {
  * @return true   If both are equal
  * @return false  If both are not equal
  */
-inline bool operator==(const ControllerPortState &lhs,
-                       const ControllerPortState &rhs) {
+inline bool operator==(const ControllerPortState &lhs, const ControllerPortState &rhs) {
     return lhs.all_buttons == rhs.all_buttons;
 }
 
@@ -199,20 +198,16 @@ class MouseReportProcessor {
     virtual void ensure_mouse_muxing() = 0;
 };
 
-class RunnableMouseReportProcessor : public MouseReportProcessor,
-                                     public Runnable {};
+class RunnableMouseReportProcessor : public MouseReportProcessor, public Runnable {};
 
-class RunnableGamepadReportProcessor : public GamepadReportProcessor,
-                                       public Runnable {};
+class RunnableGamepadReportProcessor : public GamepadReportProcessor, public Runnable {};
 
 /**
  * @brief Interface which processes reports from both \ref MouseReportProcessor
  * and \ref GamepadReportProcessor.
  * Used for classes which behave on joystick vs. mouse behaviour.
  */
-class ReportHubInterface : public MouseReportProcessor,
-                           public GamepadReportProcessor,
-                           public Runnable {
+class ReportHubInterface : public MouseReportProcessor, public GamepadReportProcessor, public Runnable {
 
   public:
     /**
@@ -224,8 +219,7 @@ class ReportHubInterface : public MouseReportProcessor,
      * primary_mouse_switcher_->register_source(handler);
      * @param source  Object which uses this object as target
      */
-    virtual void
-    register_source(std::shared_ptr<HidHandlerInterface> source) = 0;
+    virtual void register_source(std::shared_ptr<HidHandlerInterface> source) = 0;
 };
 
 /**

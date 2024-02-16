@@ -19,7 +19,9 @@
  */
 class PortSwitcher : public ControllerPortInterface {
   private:
-    PortSwitcher() { PRINTF("PortSwitcher + %p\n", this); }
+    PortSwitcher() {
+        PRINTF("PortSwitcher + %p\n", this);
+    }
 
     /// @brief Other instance to swap controller ports with
     std::weak_ptr<PortSwitcher> swap_sibling_;
@@ -28,7 +30,9 @@ class PortSwitcher : public ControllerPortInterface {
     std::shared_ptr<ControllerPortInterface> target_;
 
   public:
-    virtual ~PortSwitcher() { PRINTF("PortSwitcher -\n"); }
+    virtual ~PortSwitcher() {
+        PRINTF("PortSwitcher -\n");
+    }
 
     /**
      * @brief Constructs two instances of this class which are interconnected
@@ -38,14 +42,10 @@ class PortSwitcher : public ControllerPortInterface {
      * @return std::pair<std::shared_ptr<PortSwitcher>,
      * std::shared_ptr<PortSwitcher>> Pair of instances
      */
-    static std::pair<std::shared_ptr<PortSwitcher>,
-                     std::shared_ptr<PortSwitcher>>
-    construct_pair(std::shared_ptr<ControllerPortInterface> ta,
-                   std::shared_ptr<ControllerPortInterface> tb) {
-        std::shared_ptr<PortSwitcher> a =
-            std::shared_ptr<PortSwitcher>(new PortSwitcher());
-        std::shared_ptr<PortSwitcher> b =
-            std::shared_ptr<PortSwitcher>(new PortSwitcher());
+    static std::pair<std::shared_ptr<PortSwitcher>, std::shared_ptr<PortSwitcher>>
+    construct_pair(std::shared_ptr<ControllerPortInterface> ta, std::shared_ptr<ControllerPortInterface> tb) {
+        std::shared_ptr<PortSwitcher> a = std::shared_ptr<PortSwitcher>(new PortSwitcher());
+        std::shared_ptr<PortSwitcher> b = std::shared_ptr<PortSwitcher>(new PortSwitcher());
 
         a->target_ = ta;
         b->target_ = tb;
@@ -80,7 +80,11 @@ class PortSwitcher : public ControllerPortInterface {
     uint get_pot_y_sense_gpio() override {
         return target_->get_pot_y_sense_gpio();
     };
-    void configure_gpios() override { target_->configure_gpios(); };
+    void configure_gpios() override {
+        target_->configure_gpios();
+    };
 
-    const char *get_name() override { return target_->get_name(); }
+    const char *get_name() override {
+        return target_->get_name();
+    }
 };

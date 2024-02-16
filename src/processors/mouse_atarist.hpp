@@ -24,8 +24,12 @@
  */
 class AtariStMouse : public QuadratureMouse {
   public:
-    AtariStMouse() { PRINTF("AtariStMouse +\n"); }
-    virtual ~AtariStMouse() { PRINTF("AtariStMouse -\n"); }
+    AtariStMouse() {
+        PRINTF("AtariStMouse +\n");
+    }
+    virtual ~AtariStMouse() {
+        PRINTF("AtariStMouse -\n");
+    }
 
     /**
      * @brief Update period

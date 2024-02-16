@@ -20,8 +20,7 @@
 #define FLASH_TARGET_OFFSET (256 * 1024)
 
 /// Address in CPU memory map to read configuration data from flash
-const uint8_t *flash_target_contents =
-    (const uint8_t *)(XIP_BASE + FLASH_TARGET_OFFSET);
+const uint8_t *flash_target_contents = (const uint8_t *)(XIP_BASE + FLASH_TARGET_OFFSET);
 
 #ifdef DEBUG
 static inline void print_buf(const uint8_t *buf, size_t len) {
@@ -63,7 +62,9 @@ class SingleByteFlashEepromEmulation {
      *
      * @return uint8_t Value between 0x00 and 0x7f
      */
-    uint8_t get_config_byte() { return config_byte_cache_; }
+    uint8_t get_config_byte() {
+        return config_byte_cache_;
+    }
 
     SingleByteFlashEepromEmulation() {
         next_write_offset_ = 0;
@@ -73,15 +74,13 @@ class SingleByteFlashEepromEmulation {
                 // First clean byte found
 
                 if (next_write_offset_ > 0) {
-                    config_byte_cache_ =
-                        flash_target_contents[next_write_offset_ - 1];
+                    config_byte_cache_ = flash_target_contents[next_write_offset_ - 1];
 
-                    PRINTF("Found configuration byte 0x%x at offset 0x%lx\n",
-                           config_byte_cache_, next_write_offset_ - 1);
+                    PRINTF("Found configuration byte 0x%x at offset 0x%lx\n", config_byte_cache_,
+                           next_write_offset_ - 1);
                     return;
                 } else {
-                    PRINTF("No configuration byte found. Write at 0x%lx\n",
-                           next_write_offset_);
+                    PRINTF("No configuration byte found. Write at 0x%lx\n", next_write_offset_);
                     config_byte_cache_ = 0;
                     return;
                 }
@@ -119,21 +118,17 @@ class SingleByteFlashEepromEmulation {
         uint32_t page = next_write_offset_ >> 8;
         std::ignore = page; // in case PRINTF is removed via preprocessor
 
-        PRINTF("Reading page %lu from 0x%p\n", page,
-               &flash_target_contents[page_offset]);
-        memcpy(page_buffer_.data(), &flash_target_contents[page_offset],
-               page_buffer_.size());
+        PRINTF("Reading page %lu from 0x%p\n", page, &flash_target_contents[page_offset]);
+        memcpy(page_buffer_.data(), &flash_target_contents[page_offset], page_buffer_.size());
 
         PRINTF("Setting 0x%x at offset 0x%lx\n", config, in_page_offset);
 
         page_buffer_[in_page_offset] = config;
         // print_buf(page_buffer_.data(), page_buffer_.size());
 
-        PRINTF("Program page %lu at 0x%lx\n", page,
-               FLASH_TARGET_OFFSET + page_offset);
+        PRINTF("Program page %lu at 0x%lx\n", page, FLASH_TARGET_OFFSET + page_offset);
 
-        flash_range_program(FLASH_TARGET_OFFSET + page_offset,
-                            page_buffer_.data(), page_buffer_.size());
+        flash_range_program(FLASH_TARGET_OFFSET + page_offset, page_buffer_.data(), page_buffer_.size());
 
         config_byte_cache_ = config;
         next_write_offset_++;

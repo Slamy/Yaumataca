@@ -21,12 +21,14 @@ struct __attribute__((packed)) Report {
     uint8_t joy_right_y;
     uint8_t joy_right_x;
 
+    // Byte 4
     uint8_t coolie_hat : 4;
     uint8_t button_left : 1;
     uint8_t button_top : 1;
     uint8_t button_bottom : 1;
     uint8_t button_right : 1;
 
+    // Byte 5
     uint8_t trigger_l1 : 1;
     uint8_t trigger_l2 : 1;
     uint8_t trigger_r1 : 1;
@@ -46,7 +48,7 @@ class ImpactHidHandler : public DefaultHidHandler {
 
         auto dat = reinterpret_cast<const Report *>(d.data());
 
-#ifdef DEBUG_PRINT
+#if 0
         PRINTF("Impact: %d %d%d%d%d", dat->coolie_hat, dat->button_left,
                dat->button_right, dat->button_top, dat->button_bottom);
         for (uint8_t i : d) {
@@ -70,9 +72,10 @@ class ImpactHidHandler : public DefaultHidHandler {
         }
     }
 
-    ReportType expected_report() override { return kGamePad; }
+    ReportType expected_report() override {
+        return kGamePad;
+    }
 };
 
 static HidHandlerBuilder builder(
-    0x07b5, 0x0314, []() { return std::make_unique<ImpactHidHandler>(); },
-    nullptr);
+    0x07b5, 0x0314, []() { return std::make_unique<ImpactHidHandler>(); }, nullptr);

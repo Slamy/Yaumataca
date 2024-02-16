@@ -30,12 +30,10 @@
 class Pipeline : public Runnable {
   private:
     /// @brief Controller Port 1, Mouse Port, Right Port
-    std::shared_ptr<JoystickMouseSwitcher> primary_mouse_switcher_{
-        std::make_shared<JoystickMouseSwitcher>()};
+    std::shared_ptr<JoystickMouseSwitcher> primary_mouse_switcher_{std::make_shared<JoystickMouseSwitcher>()};
 
     /// @brief Controller Port 2, Joystick Port, Left Port
-    std::shared_ptr<JoystickMouseSwitcher> primary_joystick_switcher_{
-        std::make_shared<JoystickMouseSwitcher>()};
+    std::shared_ptr<JoystickMouseSwitcher> primary_joystick_switcher_{std::make_shared<JoystickMouseSwitcher>()};
 
     /// @brief Proxy object which relays incoming controller port data
     std::shared_ptr<PortSwitcher> joystick_port_;
@@ -70,7 +68,9 @@ class Pipeline : public Runnable {
     uint32_t mouse_mode_write_back_at_{0};
 
   public:
-    virtual ~Pipeline() { PRINTF("Pipeline -\n"); }
+    virtual ~Pipeline() {
+        PRINTF("Pipeline -\n");
+    }
 
     /**
      * @brief Performs controller port swapping
@@ -104,8 +104,7 @@ class Pipeline : public Runnable {
         joystick_port->configure_gpios();
         mouse_port->configure_gpios();
 
-        auto port_switcher =
-            PortSwitcher::construct_pair(mouse_port, joystick_port);
+        auto port_switcher = PortSwitcher::construct_pair(mouse_port, joystick_port);
         mouse_port_ = port_switcher.first;
         joystick_port_ = port_switcher.second;
 
@@ -116,10 +115,8 @@ class Pipeline : public Runnable {
 
         autofire1->set_swap_callback(std::bind(&Pipeline::swap_callback, this));
         autofire2->set_swap_callback(std::bind(&Pipeline::swap_callback, this));
-        mouse_switcher1_->set_swap_callback(
-            std::bind(&Pipeline::swap_callback, this));
-        mouse_switcher2_->set_swap_callback(
-            std::bind(&Pipeline::swap_callback, this));
+        mouse_switcher1_->set_swap_callback(std::bind(&Pipeline::swap_callback, this));
+        mouse_switcher2_->set_swap_callback(std::bind(&Pipeline::swap_callback, this));
 
         primary_mouse_switcher_->mouse_target_ = mouse_switcher1_;
         primary_mouse_switcher_->gamepad_target_ = autofire2;

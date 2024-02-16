@@ -51,8 +51,12 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
     std::function<void()> swap_callback_;
 
   public:
-    GamepadAutoFire() { PRINTF("GamepadAutoFire +\n"); }
-    virtual ~GamepadAutoFire() { PRINTF("GamepadAutoFire -\n"); }
+    GamepadAutoFire() {
+        PRINTF("GamepadAutoFire +\n");
+    }
+    virtual ~GamepadAutoFire() {
+        PRINTF("GamepadAutoFire -\n");
+    }
 
     /**
      * @brief Registers callback handler for port swap intent
@@ -113,5 +117,7 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
         }
     }
 
-    void ensure_joystick_muxing() override { target_->configure_gpios(); }
+    void ensure_joystick_muxing() override {
+        target_->configure_gpios();
+    }
 };
