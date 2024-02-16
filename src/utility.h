@@ -7,7 +7,7 @@
 #define PRINTF(...)
 #endif
 
-#include "bsp/board.h"
+#include "bsp/board_api.h"
 
 static inline uint32_t board_micros(void) {
     return timer_hw->timerawl;
