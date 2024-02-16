@@ -1,5 +1,5 @@
 /**
- * @file hid_handler.cpp
+ * @file hid_handler_builder.cpp
  * @author André Zeps
  * @brief
  * @version 0.1
@@ -9,6 +9,6 @@
  *
  */
 
-#include "hid_handler.hpp"
+#include "hid_handler_builder.hpp"
 
 std::vector<HidHandlerBuilder *> HidHandlerBuilder::builders_;

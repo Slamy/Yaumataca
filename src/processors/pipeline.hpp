@@ -67,28 +67,6 @@ class Pipeline : public Runnable {
     /// @brief Absolute time in milliseconds when to write the configuration
     uint32_t mouse_mode_write_back_at_{0};
 
-  public:
-    virtual ~Pipeline() {
-        PRINTF("Pipeline -\n");
-    }
-
-    /**
-     * @brief Performs controller port swapping
-     * Also ensures that GPIOs are correctly mixed
-     */
-    void swap_callback() {
-        led_pattern_.set_pattern(LedPatternGenerator::k2Long);
-
-        if (mouse_port_)
-            mouse_port_->swap();
-
-        if (primary_joystick_switcher_)
-            primary_joystick_switcher_->ensure_muxing();
-
-        if (primary_mouse_switcher_)
-            primary_mouse_switcher_->ensure_muxing();
-    }
-
     /**
      * @brief Construct a new Pipeline object
      *
@@ -138,6 +116,35 @@ class Pipeline : public Runnable {
         runnables_.push_back(primary_joystick_switcher_);
     }
 
+  public:
+    static Pipeline &getInstance() {
+        static std::unique_ptr<Pipeline> instance = std::unique_ptr<Pipeline>(
+            new Pipeline(LeftControllerPort::getInstance(), RightControllerPort::getInstance()));
+
+        return *instance.get();
+    }
+
+    virtual ~Pipeline() {
+        PRINTF("Pipeline -\n");
+    }
+
+    /**
+     * @brief Performs controller port swapping
+     * Also ensures that GPIOs are correctly mixed
+     */
+    void swap_callback() {
+        led_pattern_.set_pattern(LedPatternGenerator::k2Long);
+
+        if (mouse_port_)
+            mouse_port_->swap();
+
+        if (primary_joystick_switcher_)
+            primary_joystick_switcher_->ensure_muxing();
+
+        if (primary_mouse_switcher_)
+            primary_mouse_switcher_->ensure_muxing();
+    }
+
     /**
      * @brief Switches to next mouse mode
      *
@@ -178,7 +185,7 @@ class Pipeline : public Runnable {
      * More will be ignored.
      * @param handler handler to integrate
      */
-    void integrate_handler(std::shared_ptr<HidHandlerInterface> handler) {
+    void integrate_handler(std::shared_ptr<ReportSourceInterface> handler) {
 
         switch (handler->expected_report()) {
         case kMouse:

@@ -55,7 +55,7 @@
                 "break main",
                 "continue"
             ],
-            "svdFile": "${env:PICO_SDK_PATH}/src/rp2040/hardware_regs/rp2040.svd",
+            //"svdFile": "${env:PICO_SDK_PATH}/src/rp2040/hardware_regs/rp2040.svd",
             //"showDevDebugOutput": "raw",
             "rttConfig": {
                 "enabled": true,

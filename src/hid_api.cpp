@@ -9,15 +9,14 @@
  *
  */
 
-#include "bsp/board.h"
-#include "pico/stdlib.h"
-#include "tusb.h"
-
-#include "hid_handler.hpp"
 #include <map>
 #include <memory>
 
+#include "pico/stdlib.h"
+
 #include "controller_port.hpp"
+#include "default_hid_handler.hpp"
+#include "hid_handler_builder.hpp"
 #include "processors/pipeline.hpp"
 
 /// Maximum number of reports to read from a single HID Report Descriptor
@@ -30,30 +29,11 @@ static struct {
     std::shared_ptr<HidHandlerInterface> handler;
 } hid_info[CFG_TUH_HID];
 
-static std::unique_ptr<Pipeline> pipeline;
-
-void hid_app_init() {
-    pipeline = std::make_unique<Pipeline>(LeftControllerPort::getInstance(), RightControllerPort::getInstance());
-}
 void hid_app_task() {
-    pipeline->run();
-
     for (auto &i : hid_info) {
         if (i.handler)
             i.handler->run();
     }
-
-    static uint32_t button_debounce_cnt = 0;
-    static uint32_t last_button_state = 0;
-    bool button_state = board_button_read();
-
-    if (!last_button_state && button_state && button_debounce_cnt == 0) {
-        pipeline->cycle_mouse_mode();
-        button_debounce_cnt = 100;
-    } else if (button_debounce_cnt > 0 && !button_state) {
-        button_debounce_cnt--;
-    }
-    last_button_state = button_state;
 }
 
 //--------------------------------------------------------------------+
@@ -68,7 +48,6 @@ void hid_app_task() {
  * it will be skipped therefore report_desc = NULL, desc_len = 0
  *
  */
-
 void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance, uint8_t const *desc_report, uint16_t desc_len) {
     uint16_t vid, pid;
     tuh_vid_pid_get(dev_addr, &vid, &pid);
@@ -85,9 +64,8 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance, uint8_t const *desc_re
     hid_info[instance].handler = HidHandlerBuilder::find(vid, pid, hid_info[instance].report_info);
 
     if (hid_info[instance].handler) {
-        pipeline->integrate_handler(hid_info[instance].handler);
+        Pipeline::getInstance().integrate_handler(hid_info[instance].handler);
         hid_info[instance].handler->setup_reception(dev_addr, instance);
-
     } else {
         // request to receive report
         // tuh_hid_report_received_cb() will be invoked when report is
@@ -105,7 +83,6 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance, uint8_t const *desc_re
  * @param instance TinyUSB internal endpoint identifier
  */
 void tuh_hid_umount_cb(uint8_t dev_addr, uint8_t instance) {
-
     std::ignore = dev_addr;
 
     PRINTF("HID device address = %d, instance = %d is unmounted\n", dev_addr, instance);
@@ -139,7 +116,6 @@ void print_generic_report(uint8_t const *d, uint16_t len) {
  * @param len Length of report in bytes
  */
 void tuh_hid_report_received_cb(uint8_t dev_addr, uint8_t instance, uint8_t const *report, uint16_t len) {
-
     if (hid_info[instance].handler) {
         hid_info[instance].handler.get()->process_report(std::span(report, len));
     } else {
@@ -179,7 +155,6 @@ void tuh_hid_report_sent_cb(uint8_t dev_addr, uint8_t idx, uint8_t const *, uint
  */
 void tuh_hid_set_report_complete_cb(uint8_t dev_addr, uint8_t idx, uint8_t report_id, uint8_t report_type,
                                     uint16_t len) {
-
     std::ignore = dev_addr;
     std::ignore = idx;
     std::ignore = report_id;

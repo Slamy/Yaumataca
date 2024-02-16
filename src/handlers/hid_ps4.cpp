@@ -9,9 +9,9 @@
  *
  */
 
-#include "hid_handler.hpp"
+#include "default_hid_handler.hpp"
+#include "hid_handler_builder.hpp"
 
-#include "bsp/board.h"
 #include "pico/stdlib.h"
 #include "tusb.h"
 
@@ -60,8 +60,7 @@ struct __attribute__((packed)) Report {
     //  int16_t accel[3]; // x, y, z
 
     // there is still lots more info
-
-} sony_ds4_report_t;
+};
 
 /**
  * @brief Driver for the PS4 Dual Shock Controller

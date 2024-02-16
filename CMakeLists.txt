@@ -27,15 +27,17 @@ family_initialize_project(${PROJECT} ${CMAKE_CURRENT_LIST_DIR})
 add_executable(${PROJECT})
 
 target_sources(${PROJECT} PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/hid_app.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/hid_handler.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/bare_api.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/hid_api.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/hid_handler_builder.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_impact.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_mouse.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_switch_pro.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_ps3.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/hid_ps4.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-  )
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/handlers/bare_xbox_one.cpp
+)
 
 target_include_directories(${PROJECT} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/src

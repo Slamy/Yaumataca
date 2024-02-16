@@ -13,6 +13,3 @@
 
 /// @brief Task of HID App. Must be called frequently
 void hid_app_task();
-
-/// @brief Must be called once before calling \ref hid_app_task
-void hid_app_init();

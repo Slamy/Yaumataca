@@ -29,10 +29,10 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     static constexpr uint32_t kMouseChangeThreshold = 6;
 
     /// @brief Used to keep track if my mouse source exists
-    std::weak_ptr<HidHandlerInterface> mouse_source_;
+    std::weak_ptr<ReportSourceInterface> mouse_source_;
 
     /// @brief Used to keep track if my joystick source exists
-    std::weak_ptr<HidHandlerInterface> joystick_source_;
+    std::weak_ptr<ReportSourceInterface> joystick_source_;
 
   public:
     JoystickMouseSwitcher() {
@@ -58,7 +58,7 @@ class JoystickMouseSwitcher : public ReportHubInterface {
         return joystick_source_.expired();
     }
 
-    void register_source(std::shared_ptr<HidHandlerInterface> source) override {
+    void register_source(std::shared_ptr<ReportSourceInterface> source) override {
         switch (source->expected_report()) {
         case kMouse:
             mouse_source_ = source;

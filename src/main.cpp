@@ -13,14 +13,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bsp/board.h"
 #include "controller_port.hpp"
-#include "hid_app.hpp"
+#include "hid_api.hpp"
 #include "pico/stdlib.h"
-#include "processors/joystick_mouse_switcher.hpp"
 #include "processors/mouse_c1351.hpp"
+#include "processors/pipeline.hpp"
 #include "tusb.h"
 #include "utility.h"
+
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
 //--------------------------------------------------------------------+
@@ -46,13 +46,22 @@ int main() {
 
     C1351Converter::setup_pio();
 
-    hid_app_init();
-
     for (;;) {
         // tinyusb host task
         tuh_task();
-#if CFG_TUH_HID
         hid_app_task();
-#endif
+        Pipeline::getInstance().run();
+
+        static uint32_t button_debounce_cnt = 0;
+        static uint32_t last_button_state = 0;
+        bool button_state = board_button_read();
+
+        if (!last_button_state && button_state && button_debounce_cnt == 0) {
+            Pipeline::getInstance().cycle_mouse_mode();
+            button_debounce_cnt = 100;
+        } else if (button_debounce_cnt > 0 && !button_state) {
+            button_debounce_cnt--;
+        }
+        last_button_state = button_state;
     }
 }

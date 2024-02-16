@@ -9,9 +9,9 @@
  *
  */
 
-#include "hid_handler.hpp"
+#include "default_hid_handler.hpp"
+#include "hid_handler_builder.hpp"
 
-#include "bsp/board.h"
 #include "pico/stdlib.h"
 #include "tusb.h"
 

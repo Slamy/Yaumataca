@@ -12,15 +12,7 @@
 #pragma once
 
 #include "hardware/flash.h"
-
-// We're going to erase and reprogram a region 256k from the start of flash.
-// Once done, we can access this at XIP_BASE + 256k.
-
-/// Address in flash to write data to
-#define FLASH_TARGET_OFFSET (256 * 1024)
-
-/// Address in CPU memory map to read configuration data from flash
-const uint8_t *flash_target_contents = (const uint8_t *)(XIP_BASE + FLASH_TARGET_OFFSET);
+#include "utility.h"
 
 #ifdef DEBUG
 static inline void print_buf(const uint8_t *buf, size_t len) {
@@ -40,6 +32,9 @@ static inline void print_buf(const uint8_t *buf, size_t len) {
  */
 class SingleByteFlashEepromEmulation {
   private:
+    /// Address in CPU memory map to read configuration data from flash
+    const uint8_t *flash_target_contents = (const uint8_t *)(XIP_BASE + kFlashMouseModeOffset);
+
     /**
      * @brief Next write position starting from the start of the erase sector.
      * After finding the most recent configuration byte this is used to keep
@@ -97,7 +92,6 @@ class SingleByteFlashEepromEmulation {
      * @param config    Configuration byte to store
      */
     void write_config(uint8_t config) {
-
         // The top bit must never be 1, to avoid 0xff which is detected
         // as an unwritten byte
         config &= 0x7f;
@@ -108,8 +102,8 @@ class SingleByteFlashEepromEmulation {
         }
 
         if (next_write_offset_ >= FLASH_SECTOR_SIZE) {
-            PRINTF("Erase sector at 0x%x\n", FLASH_TARGET_OFFSET);
-            flash_range_erase(FLASH_TARGET_OFFSET, FLASH_SECTOR_SIZE);
+            PRINTF("Erase sector at 0x%lx\n", kFlashMouseModeOffset);
+            flash_range_erase(kFlashMouseModeOffset, FLASH_SECTOR_SIZE);
             next_write_offset_ = 0;
         }
 
@@ -126,9 +120,9 @@ class SingleByteFlashEepromEmulation {
         page_buffer_[in_page_offset] = config;
         // print_buf(page_buffer_.data(), page_buffer_.size());
 
-        PRINTF("Program page %lu at 0x%lx\n", page, FLASH_TARGET_OFFSET + page_offset);
+        PRINTF("Program page %lu at 0x%lx\n", page, kFlashMouseModeOffset + page_offset);
 
-        flash_range_program(FLASH_TARGET_OFFSET + page_offset, page_buffer_.data(), page_buffer_.size());
+        flash_range_program(kFlashMouseModeOffset + page_offset, page_buffer_.data(), page_buffer_.size());
 
         config_byte_cache_ = config;
         next_write_offset_++;

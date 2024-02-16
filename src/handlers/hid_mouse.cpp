@@ -9,7 +9,8 @@
  *
  */
 
-#include "hid_handler.hpp"
+#include "default_hid_handler.hpp"
+#include "hid_handler_builder.hpp"
 
 /**
  * @brief Generic handler of USB HID reports for mouses

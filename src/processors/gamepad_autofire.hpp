@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include "bsp/board.h"
 #include "processors/interfaces.hpp"
 #include "utility.h"
 #include <functional>

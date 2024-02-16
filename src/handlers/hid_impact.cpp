@@ -9,9 +9,9 @@
  *
  */
 
-#include "hid_handler.hpp"
+#include "default_hid_handler.hpp"
+#include "hid_handler_builder.hpp"
 
-#include "bsp/board.h"
 #include "controller_port.hpp"
 #include "pico/stdlib.h"
 

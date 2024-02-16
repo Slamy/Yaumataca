@@ -31,9 +31,11 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 * Configured mouse type is saved in flash
 
 ## Restrictions
-* Only dedicated HID Joysticks are supported.
-	* PS3 Dual Shock
+* Only dedicated Joysticks are supported.
+	* PS3 DualShock
+	* PS4 DualShock
 	* Nintendo Switch Pro Controller
+	* Xbox One Controller
 	* No-name controller I had here
 
 ## TODO

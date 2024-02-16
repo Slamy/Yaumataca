@@ -13,7 +13,6 @@
 #include <array>
 #include <memory>
 
-#include "bsp/board.h"
 #include "pico/stdlib.h"
 #include "processors/interfaces.hpp"
 #include "utility.h"

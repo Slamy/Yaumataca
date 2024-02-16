@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <cstdint>
+#include <memory>
 #include <span>
 
 /// Types of reports which are supported
@@ -119,9 +121,29 @@ class Runnable {
 class ReportHubInterface;
 
 /**
+ * @brief Interface for classes provide reports from somewhere.
+ */
+class ReportSourceInterface : public Runnable {
+  public:
+    /**
+     * @brief Provides information on the expected output type
+     *
+     * @return ReportType  Either kMouse or kGamePad
+     */
+    virtual ReportType expected_report() = 0;
+
+    /**
+     * @brief Set the data sink which will be feeded with gathered report data
+     *
+     * @param target Input data sink
+     */
+    virtual void set_target(std::shared_ptr<ReportHubInterface> target) = 0;
+};
+
+/**
  * @brief Interface for classes that process HID reports from USB devices
  */
-class HidHandlerInterface : public Runnable {
+class HidHandlerInterface : public ReportSourceInterface {
   public:
     /**
      * @brief Called after the detection of a HID endpoint
@@ -139,20 +161,6 @@ class HidHandlerInterface : public Runnable {
      * @param report The received report
      */
     virtual void process_report(std::span<const uint8_t> report) = 0;
-
-    /**
-     * @brief Provides information on the expected output type
-     *
-     * @return ReportType  Either kMouse or kGamePad
-     */
-    virtual ReportType expected_report() = 0;
-
-    /**
-     * @brief Set the data sink which will be feeded with gathered report data
-     *
-     * @param target Input data sink
-     */
-    virtual void set_target(std::shared_ptr<ReportHubInterface> target) = 0;
 };
 
 /**
@@ -219,7 +227,7 @@ class ReportHubInterface : public MouseReportProcessor, public GamepadReportProc
      * primary_mouse_switcher_->register_source(handler);
      * @param source  Object which uses this object as target
      */
-    virtual void register_source(std::shared_ptr<HidHandlerInterface> source) = 0;
+    virtual void register_source(std::shared_ptr<ReportSourceInterface> source) = 0;
 };
 
 /**
