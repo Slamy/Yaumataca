@@ -2329,6 +2329,9 @@
 
   (gr_rect (start 152 62) (end 188 115.5)
     (stroke (width 0.1) (type default)) (fill none) (layer "Edge.Cuts") (tstamp 279a1ed9-a5ac-4096-b6e4-3fd24e7432ba))
+  (gr_text "Yaumataca Rev 0.1\nDesigned by Slamy" (at 181.5 94 90) (layer "B.SilkS") (tstamp e5c939f2-8ffe-402e-b052-70aa807a3653)
+    (effects (font (size 1.5 1.5) (thickness 0.3) bold) (justify right bottom mirror))
+  )
   (dimension (type orthogonal) (layer "Dwgs.User") (tstamp 15bad248-71b5-48d4-9180-b5824cdc8ee0)
     (pts (xy 152 62) (xy 188 62))
     (height -6.35)
