@@ -29,11 +29,13 @@ set_directory_properties(PROPERTIES
 
 add_executable(unittest
     ${CMAKE_CURRENT_SOURCE_DIR}/test_pipeline.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/mock_mouse_c1351.cpp
 )
 
 target_include_directories(unittest PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/stubs/
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/processors/
 )
 
 target_link_libraries(

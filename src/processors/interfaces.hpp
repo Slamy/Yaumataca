@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "pico/types.h"
 #include <cstdint>
 #include <memory>
 #include <span>

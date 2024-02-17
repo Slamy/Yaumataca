@@ -12,11 +12,11 @@
 #include <map>
 #include <memory>
 
-#include "pico/stdlib.h"
-
 #include "controller_port.hpp"
 #include "default_hid_handler.hpp"
+#include "global.hpp"
 #include "hid_handler_builder.hpp"
+#include "pico/stdlib.h"
 #include "processors/pipeline.hpp"
 
 /// Maximum number of reports to read from a single HID Report Descriptor
@@ -64,7 +64,7 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance, uint8_t const *desc_re
     hid_info[instance].handler = HidHandlerBuilder::find(vid, pid, hid_info[instance].report_info);
 
     if (hid_info[instance].handler) {
-        Pipeline::getInstance().integrate_handler(hid_info[instance].handler);
+        gbl_pipeline.integrate_handler(hid_info[instance].handler);
         hid_info[instance].handler->setup_reception(dev_addr, instance);
     } else {
         // request to receive report

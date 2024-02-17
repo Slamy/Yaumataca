@@ -16,6 +16,7 @@
 #include <map>
 
 #include "controller_port.hpp"
+#include "global.hpp"
 #include "handlers/bare_xbox_one.hpp"
 #include "pico/stdlib.h"
 #include "processors/pipeline.hpp"
@@ -138,7 +139,7 @@ static void open_vendor_interface(uint8_t daddr, tusb_desc_interface_t const *de
 
         handler->open_vendor_interface(daddr, desc_itf, max_len);
         bare_handlers[daddr] = handler;
-        Pipeline::getInstance().integrate_handler(handler);
+        gbl_pipeline.integrate_handler(handler);
     }
 }
 

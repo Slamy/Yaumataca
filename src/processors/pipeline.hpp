@@ -67,6 +67,11 @@ class Pipeline : public Runnable {
     /// @brief Absolute time in milliseconds when to write the configuration
     uint32_t mouse_mode_write_back_at_{0};
 
+  public:
+    virtual ~Pipeline() {
+        PRINTF("Pipeline -\n");
+    }
+
     /**
      * @brief Construct a new Pipeline object
      *
@@ -116,25 +121,6 @@ class Pipeline : public Runnable {
 
         runnables_.push_back(primary_mouse_switcher_);
         runnables_.push_back(primary_joystick_switcher_);
-    }
-
-  public:
-    /**
-     * @brief Singleton pattern for this class
-     * Only one pipeline is allowed right at the moment to make the software architecture
-     * a little bit easier.
-     *
-     * @return Pipeline& Single instance
-     */
-    static Pipeline &getInstance() {
-        static std::unique_ptr<Pipeline> instance = std::unique_ptr<Pipeline>(
-            new Pipeline(LeftControllerPort::getInstance(), RightControllerPort::getInstance()));
-
-        return *instance.get();
-    }
-
-    virtual ~Pipeline() {
-        PRINTF("Pipeline -\n");
     }
 
     /**

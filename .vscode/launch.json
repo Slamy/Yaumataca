@@ -5,12 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Unittest",
+            "name": "unittest",
             "type": "cppdbg",
             "request": "launch",
             "program": "${command:cmake.launchTargetPath}",
-            //"executable": "${command:cmake.launchTargetPath}",
-            "args": [],
+            "args": [
+                "--gtest_break_on_failure"
+            ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

@@ -12,9 +12,13 @@ DEFINE_FFF_GLOBALS;
 
 uint32_t global_time_us{0};
 
-uint32_t board_millis() { return global_time_us / 1000; }
+uint32_t board_millis() {
+    return global_time_us / 1000;
+}
 
-uint32_t board_micros() { return global_time_us; }
+uint32_t board_micros() {
+    return global_time_us;
+}
 
 // FAKE_VALUE_FUNC(uint32_t, board_micros);
 FAKE_VOID_FUNC(board_led_write, bool);
@@ -35,8 +39,11 @@ class MockControllerPort : public ControllerPortInterface {
     MOCK_METHOD(uint, get_pot_y_drain_gpio, ());
     MOCK_METHOD(uint, get_pot_y_sense_gpio, ());
     MOCK_METHOD(void, configure_gpios, ());
+    MOCK_METHOD(size_t, get_index, ());
 
-    const char *get_name() override { return ""; }
+    const char *get_name() override {
+        return "";
+    }
 };
 
 class MockHidHandler : public HidHandlerInterface {
@@ -44,14 +51,17 @@ class MockHidHandler : public HidHandlerInterface {
     ReportType type_;
 
   public:
-    MockHidHandler(ReportType t) : type_(t) {}
+    MockHidHandler(ReportType t) : type_(t) {
+    }
     std::shared_ptr<ReportHubInterface> target_;
 
     void setup_reception(int8_t dev_addr, uint8_t instance) override{};
 
     void process_report(std::span<const uint8_t> report) override{};
 
-    ReportType expected_report() { return type_; }
+    ReportType expected_report() {
+        return type_;
+    }
     void set_target(std::shared_ptr<ReportHubInterface> target) override {
         target_ = target;
     };
@@ -77,34 +87,29 @@ ControllerPortState cps_from_text(const char *text) {
 }
 
 void cps_to_text(ControllerPortState state) {
-    printf("cps_from_text(\"%d%d%d%d %d%d%d\");\n", state.up, state.down,
-           state.left, state.right, state.fire1, state.fire2, state.fire3);
+    printf("cps_from_text(\"%d%d%d%d %d%d%d\");\n", state.up, state.down, state.left, state.right, state.fire1,
+           state.fire2, state.fire3);
 }
 
 void expect_str(ControllerPortState state) {
-    printf("expect (\"%d%d%d%d %d%d%d\");\n", state.up, state.down, state.left,
-           state.right, state.fire1, state.fire2, state.fire3);
+    printf("expect (\"%d%d%d%d %d%d%d\");\n", state.up, state.down, state.left, state.right, state.fire1, state.fire2,
+           state.fire3);
 }
 
 TEST(Pipeline, SingleJoystickAndAmigaMouse) {
 
-    std::shared_ptr<MockControllerPort> port_joy =
-        std::make_shared<MockControllerPort>();
-    std::shared_ptr<MockControllerPort> port_mouse =
-        std::make_shared<MockControllerPort>();
+    std::shared_ptr<MockControllerPort> port_joy = std::make_shared<MockControllerPort>();
+    std::shared_ptr<MockControllerPort> port_mouse = std::make_shared<MockControllerPort>();
 
     EXPECT_CALL(*port_joy, configure_gpios).Times(testing::AtLeast(1));
     EXPECT_CALL(*port_mouse, configure_gpios).Times(testing::AtLeast(1));
 
-    ON_CALL(*port_mouse, set_port_state(_))
-        .WillByDefault([](ControllerPortState state) { cps_to_text(state); });
+    ON_CALL(*port_mouse, set_port_state(_)).WillByDefault([](ControllerPortState state) { cps_to_text(state); });
 
     auto pipeline = std::make_unique<Pipeline>(port_joy, port_mouse);
 
-    std::shared_ptr<MockHidHandler> mock_joy =
-        std::make_shared<MockHidHandler>(ReportType::kGamePad);
-    std::shared_ptr<MockHidHandler> mock_mouse =
-        std::make_shared<MockHidHandler>(ReportType::kMouse);
+    std::shared_ptr<MockHidHandler> mock_joy = std::make_shared<MockHidHandler>(ReportType::kGamePad);
+    std::shared_ptr<MockHidHandler> mock_mouse = std::make_shared<MockHidHandler>(ReportType::kMouse);
 
     EXPECT_FALSE(mock_joy->target_);
     EXPECT_FALSE(mock_mouse->target_);
@@ -116,6 +121,8 @@ TEST(Pipeline, SingleJoystickAndAmigaMouse) {
     EXPECT_TRUE(mock_mouse->target_);
 
     ControllerPortState nothing_pressed;
+    // After init, the "nothing pressed" state is always produced first
+    EXPECT_CALL(*port_joy, set_port_state(nothing_pressed));
 
     // Press the fire button
     {
@@ -282,8 +289,11 @@ TEST(Pipeline, SingleJoystickAndAmigaMouse) {
     }
 
     // Swap the joysticks
-
     {
+        // During swap, it is the same as with the init routine
+        EXPECT_CALL(*port_mouse, set_port_state(nothing_pressed));
+        // EXPECT_CALL(*port_joy, set_port_state(nothing_pressed));
+
         GamepadReport report;
         report.joystick_swap = 1;
         pipeline->run();
@@ -325,23 +335,18 @@ TEST(Pipeline, SingleJoystickAndAmigaMouse) {
 
 TEST(Pipeline, DualAmigaMouse) {
 
-    std::shared_ptr<MockControllerPort> port_joy =
-        std::make_shared<MockControllerPort>();
-    std::shared_ptr<MockControllerPort> port_mouse =
-        std::make_shared<MockControllerPort>();
+    std::shared_ptr<MockControllerPort> port_joy = std::make_shared<MockControllerPort>();
+    std::shared_ptr<MockControllerPort> port_mouse = std::make_shared<MockControllerPort>();
 
     EXPECT_CALL(*port_joy, configure_gpios).Times(testing::AtLeast(1));
     EXPECT_CALL(*port_mouse, configure_gpios).Times(testing::AtLeast(1));
 
-    ON_CALL(*port_mouse, set_port_state(_))
-        .WillByDefault([](ControllerPortState state) { cps_to_text(state); });
+    ON_CALL(*port_mouse, set_port_state(_)).WillByDefault([](ControllerPortState state) { cps_to_text(state); });
 
     auto pipeline = std::make_unique<Pipeline>(port_joy, port_mouse);
 
-    std::shared_ptr<MockHidHandler> mock_mouse2 =
-        std::make_shared<MockHidHandler>(ReportType::kMouse);
-    std::shared_ptr<MockHidHandler> mock_mouse1 =
-        std::make_shared<MockHidHandler>(ReportType::kMouse);
+    std::shared_ptr<MockHidHandler> mock_mouse2 = std::make_shared<MockHidHandler>(ReportType::kMouse);
+    std::shared_ptr<MockHidHandler> mock_mouse1 = std::make_shared<MockHidHandler>(ReportType::kMouse);
 
     EXPECT_FALSE(mock_mouse2->target_);
     EXPECT_FALSE(mock_mouse1->target_);
@@ -421,20 +426,16 @@ TEST(Pipeline, DualAmigaMouse) {
 
 TEST(Pipeline, DualJoystick) {
 
-    std::shared_ptr<MockControllerPort> port_joy =
-        std::make_shared<MockControllerPort>();
-    std::shared_ptr<MockControllerPort> port_mouse =
-        std::make_shared<MockControllerPort>();
+    std::shared_ptr<MockControllerPort> port_joy = std::make_shared<MockControllerPort>();
+    std::shared_ptr<MockControllerPort> port_mouse = std::make_shared<MockControllerPort>();
 
     EXPECT_CALL(*port_joy, configure_gpios);
     EXPECT_CALL(*port_mouse, configure_gpios);
 
     auto pipeline = std::make_unique<Pipeline>(port_joy, port_mouse);
 
-    std::shared_ptr<MockHidHandler> mock_joy1 =
-        std::make_shared<MockHidHandler>(ReportType::kGamePad);
-    std::shared_ptr<MockHidHandler> mock_joy2 =
-        std::make_shared<MockHidHandler>(ReportType::kGamePad);
+    std::shared_ptr<MockHidHandler> mock_joy1 = std::make_shared<MockHidHandler>(ReportType::kGamePad);
+    std::shared_ptr<MockHidHandler> mock_joy2 = std::make_shared<MockHidHandler>(ReportType::kGamePad);
 
     pipeline->integrate_handler(mock_joy1);
     pipeline->integrate_handler(mock_joy2);

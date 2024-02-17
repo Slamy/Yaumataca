@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "controller_port.hpp"
+#include "global.hpp"
 #include "hid_api.hpp"
 #include "pico/stdlib.h"
 #include "processors/mouse_c1351.hpp"
@@ -28,7 +29,13 @@
 PIO C1351Converter::pio_{nullptr};
 uint C1351Converter::offset_{0};
 
-/*------------- MAIN -------------*/
+/**
+ * @brief global instance of the primary input pipeline
+ *
+ * Usually this is considered bad practice, but the controller ports are also singleton here,
+ * which means that the pipeline could exist for both as a single instance as well.
+ */
+Pipeline gbl_pipeline{LeftControllerPort::getInstance(), RightControllerPort::getInstance()};
 
 /**
  * @brief First function to call
@@ -51,14 +58,14 @@ int main() {
         // tinyusb host task
         tuh_task();
         hid_app_task();
-        Pipeline::getInstance().run();
+        gbl_pipeline.run();
 
         static uint32_t button_debounce_cnt = 0;
         static uint32_t last_button_state = 0;
         bool button_state = board_button_read();
 
         if (!last_button_state && button_state && button_debounce_cnt == 0) {
-            Pipeline::getInstance().cycle_mouse_mode();
+            gbl_pipeline.cycle_mouse_mode();
             button_debounce_cnt = 100;
         } else if (button_debounce_cnt > 0 && !button_state) {
             button_debounce_cnt--;

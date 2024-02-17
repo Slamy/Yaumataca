@@ -14,6 +14,8 @@
 #include <cstdint>
 #include <span>
 
+#include <bsp/board_api.h>
+
 /**
  * @brief Generates various blinking patterns
  *
