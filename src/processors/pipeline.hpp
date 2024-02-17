@@ -117,7 +117,7 @@ class Pipeline : public Runnable {
         mouse_switcher1_->set_mode(mouse_mode_);
         mouse_switcher2_->set_mode(mouse_mode_);
         autofire1->set_c64_mode(mouse_mode_ == 2);
-        autofire1->set_c64_mode(mouse_mode_ == 2);
+        autofire2->set_c64_mode(mouse_mode_ == 2);
 
         runnables_.push_back(primary_mouse_switcher_);
         runnables_.push_back(primary_joystick_switcher_);
@@ -157,7 +157,7 @@ class Pipeline : public Runnable {
         mouse_switcher1_->set_mode(mouse_mode_);
         mouse_switcher2_->set_mode(mouse_mode_);
         autofire1->set_c64_mode(mouse_mode_ == 2);
-        autofire1->set_c64_mode(mouse_mode_ == 2);
+        autofire2->set_c64_mode(mouse_mode_ == 2);
 
         primary_joystick_switcher_->ensure_muxing();
         primary_mouse_switcher_->ensure_muxing();

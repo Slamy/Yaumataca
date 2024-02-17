@@ -161,6 +161,12 @@ class C1351Converter : public RunnableMouseReportProcessor {
 
         int32_t calibration = static_cast<int32_t>(yp);
 
+        // Make the calibration fluctuate during calibration mode
+        // to improve the results after calibration.
+        if (operating_state_ != OperatingState::kEffective) {
+            calibration += (values_pushed_cnt_ & 0x08) ? 10 : -10;
+        }
+
         pio_sm_put(pio_, sm, (kDrainLength + pot_value) * kDigitPerUs + calibration);
     }
 
@@ -394,12 +400,11 @@ class C1351Converter : public RunnableMouseReportProcessor {
         static constexpr uint8_t kNotCalibratedChanValue{25};
 
         if (pio_fifos_can_take_values()) {
+            values_pushed_cnt_++;
 
             switch (operating_state_) {
             case OperatingState::kEffective: {
                 int32_t kMaxChange = (values_pushed_cnt_ % 8) > 3 ? 2 : 1; // 1.5 per cycle
-
-                values_pushed_cnt_++;
 
                 int32_t inc_x = std::max(-kMaxChange, std::min(mouse_accumulator_x, kMaxChange));
                 int32_t inc_y = std::max(-kMaxChange, std::min(mouse_accumulator_y, kMaxChange));
