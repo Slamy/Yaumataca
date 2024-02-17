@@ -38,7 +38,7 @@ struct __attribute__((packed)) XboxOneButtonData {
     int16_t stick_right_y;
 };
 
-void c_report_received(tuh_xfer_t *xfer);
+static void c_report_received(tuh_xfer_t *xfer);
 
 void configure_finished_received(tuh_xfer_t *xfer) {
     std::ignore = xfer;

@@ -20,7 +20,7 @@
 // a lot is stolen from here as the tinyusb example already supports DS4
 // https://github.com/hathach/tinyusb/blob/master/examples/host/hid_controller/src/hid_app.c
 
-// Sony DS4 report layout detail https://www.psdevwiki.com/ps4/DS4-USB
+/// Sony DS4 report layout detail https://www.psdevwiki.com/ps4/DS4-USB
 struct __attribute__((packed)) Report {
     uint8_t report_id;
     uint8_t joy_left_x, joy_left_y, z, rz; // joystick
@@ -75,6 +75,14 @@ class PS4DualShockHandler : public DefaultHidHandler {
     /// @brief Minimum difference to center to register a direction
     static constexpr uint32_t kAnalogThreshold{0x40};
 
+    /**
+     * @brief Converts dpad value of a ps4 controller to 4 single buttons
+     * This should not to be confused with coolie hat values which are
+     * using different values
+     *
+     * @param report output struct to store data in
+     * @param hat_dir 4 bit input
+     */
     void update_from_dpad(GamepadReport &report, uint8_t hat_dir) {
         report.up = (hat_dir == 0 || hat_dir == 1 || hat_dir == 7);
         report.right = (hat_dir == 2 || hat_dir == 3 || hat_dir == 1);

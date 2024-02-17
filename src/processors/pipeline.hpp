@@ -119,6 +119,13 @@ class Pipeline : public Runnable {
     }
 
   public:
+    /**
+     * @brief Singleton pattern for this class
+     * Only one pipeline is allowed right at the moment to make the software architecture
+     * a little bit easier.
+     *
+     * @return Pipeline& Single instance
+     */
     static Pipeline &getInstance() {
         static std::unique_ptr<Pipeline> instance = std::unique_ptr<Pipeline>(
             new Pipeline(LeftControllerPort::getInstance(), RightControllerPort::getInstance()));

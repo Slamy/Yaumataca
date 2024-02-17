@@ -15,6 +15,9 @@
 #include "controller_port.hpp"
 #include "pico/stdlib.h"
 
+/**
+ * @brief Packed struct representing the HID report
+ */
 struct __attribute__((packed)) Report {
     uint8_t joy_left_x;
     uint8_t joy_left_y;

@@ -22,7 +22,10 @@
 #include "tusb.h"
 #include "utility.h"
 
+/// last mounted device descriptor
 tusb_desc_device_t desc_device;
+
+/// English (United States)
 #define LANGUAGE_ID 0x0409
 
 static void _convert_utf16le_to_utf8(const uint16_t *utf16, size_t utf16_len, uint8_t *utf8, size_t utf8_len) {
@@ -74,7 +77,15 @@ static void print_utf16(uint16_t *temp_buf, size_t buf_len) {
     printf((char *)temp_buf);
 }
 
-uint16_t count_interface_total_len(tusb_desc_interface_t const *desc_itf, uint8_t itf_count, uint16_t max_len) {
+/**
+ * @brief Calculates actual size of Configuration descriptor
+ *
+ * @param desc_itf      Pointer to Configuration Descriptor
+ * @param itf_count     Number of interfaces to expect
+ * @param max_len       Length of buffer of desc_itf in bytes
+ * @return uint16_t Length in byte
+ */
+static uint16_t count_interface_total_len(tusb_desc_interface_t const *desc_itf, uint8_t itf_count, uint16_t max_len) {
     uint8_t const *p_desc = (uint8_t const *)desc_itf;
     uint16_t len = 0;
 
@@ -101,9 +112,23 @@ uint16_t count_interface_total_len(tusb_desc_interface_t const *desc_itf, uint8_
     return len;
 }
 
+/**
+ * @brief Hash map with the TinyUSB device address as key
+ *
+ * and implementations of \ref ReportSourceInterface as value.
+ * Used to store mounted vendor class devices for proper deletion
+ * during unmount.
+ */
 std::map<uint8_t, std::shared_ptr<ReportSourceInterface>> bare_handlers;
 
-void open_vendor_interface(uint8_t daddr, tusb_desc_interface_t const *desc_itf, uint16_t max_len) {
+/**
+ * @brief Called for every found USB interface description that is off vendor class type
+ *
+ * @param daddr     TinyUSB device identifier
+ * @param desc_itf  Pointer to interface descriptor
+ * @param max_len   Length of the given interface descriptor
+ */
+static void open_vendor_interface(uint8_t daddr, tusb_desc_interface_t const *desc_itf, uint16_t max_len) {
     uint16_t vid, pid;
 
     tuh_vid_pid_get(daddr, &vid, &pid);
@@ -117,8 +142,16 @@ void open_vendor_interface(uint8_t daddr, tusb_desc_interface_t const *desc_itf,
     }
 }
 
-// simple configuration parser to open and listen to HID Endpoint IN
-void parse_config_descriptor(uint8_t dev_addr, tusb_desc_configuration_t const *desc_cfg) {
+/**
+ * @brief Parses USB device descriptor
+ *
+ * and calls \ref open_vendor_interface for the first vendor class interface found.
+ * All others are ignored
+ *
+ * @param dev_addr  TinyUSB device identifier
+ * @param desc_cfg  Pointer to USB configuration descriptor
+ */
+static void parse_config_descriptor(uint8_t dev_addr, tusb_desc_configuration_t const *desc_cfg) {
     uint8_t const *desc_end = ((uint8_t const *)desc_cfg) + tu_le16toh(desc_cfg->wTotalLength);
     uint8_t const *p_desc = tu_desc_next(desc_cfg);
 
@@ -159,7 +192,7 @@ void parse_config_descriptor(uint8_t dev_addr, tusb_desc_configuration_t const *
     }
 }
 
-void print_device_descriptor(tuh_xfer_t *xfer) {
+static void handle_device_descriptor(tuh_xfer_t *xfer) {
     if (XFER_RESULT_SUCCESS != xfer->result) {
         printf("Failed to get device descriptor\r\n");
         return;
@@ -210,7 +243,7 @@ void print_device_descriptor(tuh_xfer_t *xfer) {
     }
 }
 
-// Invoked when device is mounted (configured)
+/// Invoked when device is mounted (configured)
 void tuh_mount_cb(uint8_t daddr) {
     printf("Device attached, address = %d\r\n", daddr);
     uint16_t vid, pid;
@@ -222,7 +255,7 @@ void tuh_mount_cb(uint8_t daddr) {
 
     // Xbox One Controller
     if (vid == 0x045e && pid == 0x0b12) {
-        tuh_descriptor_get_device(daddr, &desc_device, 18, print_device_descriptor, 0);
+        tuh_descriptor_get_device(daddr, &desc_device, 18, handle_device_descriptor, 0);
     }
 }
 

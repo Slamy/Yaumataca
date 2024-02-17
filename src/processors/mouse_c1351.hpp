@@ -18,6 +18,11 @@
 #include "hardware/pio.h"
 #include "pico/stdlib.h"
 
+/**
+ * @brief Calibration data for a single controller port
+ * Provides modification for the linear interpolation as performed by
+ * \ref C1351Converter::push_calibrated_value
+ */
 struct C1351CalibrationData {
     /// @brief clock ticks to add to achieve the most stable timing for a value
     /// of 64 on POTY
@@ -97,6 +102,8 @@ class C1351Converter : public RunnableMouseReportProcessor {
         kCalibratePotY191, ///< Calibrate upper end of usable Pot Y range
     };
 
+    /// Timing correction values for stable POT input on the SID
+    /// Required because of component tolerances
     static std::array<struct C1351CalibrationData, 2> calibration_;
 
     /// Current active mode
@@ -174,9 +181,11 @@ class C1351Converter : public RunnableMouseReportProcessor {
      */
     uint32_t values_pushed_cnt_{0};
 
+    /// @brief Stores calibration data to Flash
     static void save_calibration_data();
 
   public:
+    /// @brief Loads calibration data from Flash
     static void load_calibration_data();
 
     C1351Converter() {
