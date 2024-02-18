@@ -34,8 +34,11 @@ uint C1351Converter::offset_{0};
  *
  * Usually this is considered bad practice, but the controller ports are also singleton here,
  * which means that the pipeline could exist for both as a single instance as well.
+ *
+ * Were are using std::optional here to control the time, the constructor is called as
+ * it also initializes hardware and misconfiguration can occur when done to early.
  */
-Pipeline gbl_pipeline{LeftControllerPort::getInstance(), RightControllerPort::getInstance()};
+std::optional<Pipeline> gbl_pipeline;
 
 /**
  * @brief First function to call
@@ -51,6 +54,7 @@ int main() {
     // init host stack on configured roothub port
     tuh_init(BOARD_TUH_RHPORT);
 
+    gbl_pipeline.emplace(LeftControllerPort::getInstance(), RightControllerPort::getInstance());
     C1351Converter::load_calibration_data();
     C1351Converter::setup_pio();
 
@@ -58,14 +62,14 @@ int main() {
         // tinyusb host task
         tuh_task();
         hid_app_task();
-        gbl_pipeline.run();
+        gbl_pipeline->run();
 
         static uint32_t button_debounce_cnt = 0;
         static uint32_t last_button_state = 0;
         bool button_state = board_button_read();
 
         if (!last_button_state && button_state && button_debounce_cnt == 0) {
-            gbl_pipeline.cycle_mouse_mode();
+            gbl_pipeline->cycle_mouse_mode();
             button_debounce_cnt = 100;
         } else if (button_debounce_cnt > 0 && !button_state) {
             button_debounce_cnt--;

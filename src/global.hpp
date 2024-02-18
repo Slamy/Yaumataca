@@ -1,5 +1,6 @@
 #pragma once
 
 #include "processors/pipeline.hpp"
+#include <optional>
 
-extern Pipeline gbl_pipeline;
+extern std::optional<Pipeline> gbl_pipeline;
