@@ -53,20 +53,20 @@ void display_calibration_state() {
               "on your mouse.\r\n");
         break;
     case kCalibratePotX64:
-        cputs("Slide mouse to make Pot X stable 64... \r\n"
+        cputs("Use wheel to make Pot X stable 64.     \r\n"
               "Press left mouse button to continue    \r\n"
               "Press right mouse button to abort      \r\n");
         cclearxy(0, 13, 40);
 
         break;
     case kCalibratePotX191:
-        cprintf("Slide mouse to make Pot X stable 191...\r\n");
+        cputs("Use wheel to make Pot X stable 191.   \r\n");
         break;
     case kCalibratePotY64:
-        cprintf("Slide mouse to make Pot Y stable 64... \r\n");
+        cputs("Use wheel to make Pot Y stable 64.    \r\n");
         break;
     case kCalibratePotY191:
-        cprintf("Slide mouse to make Pot Y stable 191...\r\n");
+        cputs("Use wheel to make Pot Y stable 191.   \r\n");
         break;
     }
 }

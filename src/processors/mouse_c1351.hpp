@@ -164,7 +164,7 @@ class C1351Converter : public RunnableMouseReportProcessor {
         // Make the calibration fluctuate during calibration mode
         // to improve the results after calibration.
         if (operating_state_ != OperatingState::kEffective) {
-            calibration += (values_pushed_cnt_ & 0x08) ? 10 : -10;
+            calibration += (values_pushed_cnt_ & 0x08) ? 20 : -20;
         }
 
         pio_sm_put(pio_, sm, (kDrainLength + pot_value) * kDigitPerUs + calibration);
@@ -327,28 +327,29 @@ class C1351Converter : public RunnableMouseReportProcessor {
             }
             break;
         case OperatingState::kCalibratePotX64:
-            calib.pot_x_64_ += mouse_report.relx;
+            calib.pot_x_64_ += mouse_report.wheel;
+
             if (state_.fire1 && !last_state_.fire1) {
                 operating_state_ = OperatingState::kCalibratePotX191;
                 PRINTF("To kCalibratePotX191\n");
             }
             break;
         case OperatingState::kCalibratePotX191:
-            calib.pot_x_191_ += mouse_report.relx;
+            calib.pot_x_191_ += mouse_report.wheel;
             if (state_.fire1 && !last_state_.fire1) {
                 operating_state_ = OperatingState::kCalibratePotY64;
                 PRINTF("To kCalibratePotY64\n");
             }
             break;
         case OperatingState::kCalibratePotY64:
-            calib.pot_y_64_ += mouse_report.relx;
+            calib.pot_y_64_ += mouse_report.wheel;
             if (state_.fire1 && !last_state_.fire1) {
                 operating_state_ = OperatingState::kCalibratePotY191;
                 PRINTF("To kCalibratePotY191\n");
             }
             break;
         case OperatingState::kCalibratePotY191:
-            calib.pot_y_191_ += mouse_report.relx;
+            calib.pot_y_191_ += mouse_report.wheel;
             if (state_.fire1 && !last_state_.fire1) {
                 operating_state_ = OperatingState::kEffective;
                 PRINTF("Calibration finished! %ld %ld %ld %ld\n", calib.pot_x_64_, calib.pot_x_191_, calib.pot_y_64_,
