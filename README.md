@@ -45,16 +45,24 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 
 ## How to construct
 
-[Manual for construction](doc/construction.md)
+The project is constructable via perfboard or PCB.
 
-### Example hardware design
+[Manual for construction on a perfboard](doc/construction_perfboard.md)
 
-Here an example, how it could be build using BC547 transistors and 10k resistors.
+For the PCB, please use the [KiCad files](schematic/yaumataca/).
+
+In case the PCB is chosen, there is also a [3D model of a case](housing/) available, which can be used for 3D printing.
+
 To operate the unit, one OTG Hub is recommended which provides multiple USB A ports attached to a USB micro port.
 If only one USB device is to be attached, a simple USB micro to USB A adapter will also work, but I suggest to go for the Hub.
 
-![Photo of Yaumataca](doc/20230731_223820.jpg)
-![Photo of Yaumataca from other angle](doc/20230731_223837.jpg)
+### Example hardware design
+
+Here an example of the PCB inside the case.
+![Photo of Yaumataca in 3d printed case](doc/housing_v1.jpg)
+
+Here the PCB side by side with the prototype.
+![Photo of Yaumataca build from PCB and perfboard](doc/pcb_vs_perfboard.jpg)
 
 
 ## How to build the firmware

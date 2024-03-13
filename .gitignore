@@ -5,4 +5,5 @@ gen-doc
 
 /c64tool/*.prg
 /c64tool/*.o
+*.FCBak
 
