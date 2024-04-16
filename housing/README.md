@@ -17,9 +17,8 @@ Problems:
 
 Based on Version 1 but with changes:
 
-* Big hole is replaced by smaller one and a small piece of plastic.
+* Big hole is replaced by smaller one and a small piece of plastic is used as a button.
 * Screw is moved to another location
 * Bottom wall is thicker so screw head is not sticking out.
-* Structural integrity still not perfect.
 
-![Photo of both versions side by side](../doc/housing_v1_vs_v2.jpg)
+![Photo of both versions side by side](../doc/housing_v2.jpg)
