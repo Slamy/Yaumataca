@@ -42,6 +42,7 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 ## TODO
 * HID Descriptor Parsing (generic USB joystick support, eventually)
 * Bluetooth (eventually)
+* Explain C1351 calibration using C64 tool
 
 ## How to construct
 
@@ -50,6 +51,8 @@ The project is constructable via perfboard or PCB.
 [Manual for construction on a perfboard](doc/construction_perfboard.md)
 
 For the PCB, please use the [KiCad files](schematic/yaumataca/).
+If you order your parts from [Reichelt](https//reichelt.de), you may use the
+attached [ordering lists](doc/reichelt.csv) which can be imported on the website.
 
 In case the PCB is chosen, there is also a [3D model of a case](housing/) available, which can be used for 3D printing.
 
