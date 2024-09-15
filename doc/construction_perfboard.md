@@ -17,7 +17,7 @@ Especially with the Atari ST, there is not much room under the keyboard.
 
 ## Simplified schematic
 
-Reduced to the essentials...
+Reduced to the essentials. The sense pins are only required for C1351 mode as the internal logic has to synchronize with the measurement cycle of the SID.
 
 ![Simple schematic](simplified_schematic.svg)
 
