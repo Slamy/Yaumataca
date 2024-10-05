@@ -113,7 +113,7 @@ class MouseModeSwitcher : public RunnableMouseReportProcessor {
 
     void process_mouse_report(MouseReport &mouse_report) override {
 
-        bool swap_combi = (mouse_report.left && mouse_report.middle && mouse_report.right);
+        bool swap_combi = (mouse_report.left && mouse_report.right);
 
         if (!swap_combination_pressed_ && swap_combi) {
             swap_press_start_time = board_millis();

@@ -115,6 +115,7 @@ class PS3DualShockHandler : public DefaultHidHandler {
 
         aj.fire = dat->button_square || dat->button_circle;
         aj.sec_fire = dat->button_cross;
+        aj.third_fire = dat->trigger_l1;
         aj.auto_fire = dat->button_triangle;
 
         aj.joystick_swap = dat->button_select;
@@ -137,5 +138,4 @@ class PS3DualShockHandler : public DefaultHidHandler {
     }
 };
 
-static HidHandlerBuilder builder(
-    0x054c, 0x0268, []() { return std::make_unique<PS3DualShockHandler>(); }, nullptr);
+static HidHandlerBuilder builder(0x054c, 0x0268, []() { return std::make_unique<PS3DualShockHandler>(); }, nullptr);

@@ -49,6 +49,7 @@ class GamepadReport {
         struct {
             bool fire : 1;
             bool sec_fire : 1;
+            bool third_fire : 1;
             bool auto_fire : 1;
             bool up : 1;
             bool down : 1;

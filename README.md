@@ -37,12 +37,16 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 	* PS4 DualShock
 	* Nintendo Switch Pro Controller
 	* Xbox One Controller
-	* No-name controller I had here
 
 ## TODO
+* Add mouse wheel for C64
+* Ass 3. Fire button
 * HID Descriptor Parsing (generic USB joystick support, eventually)
 * Bluetooth (eventually)
 * Explain C1351 calibration using C64 tool
+
+## Wishlist of users
+* Having Port Swap on Mouse via 2 buttons instead of all 3
 
 ## How to construct
 
