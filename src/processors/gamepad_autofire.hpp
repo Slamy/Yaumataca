@@ -114,10 +114,11 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
 
         if (c64_mode_) {
             out_state_.fire2 = !in_state_.sec_fire;
+            out_state_.fire3 = !in_state_.third_fire;
         } else {
             out_state_.fire2 = in_state_.sec_fire;
+            out_state_.fire3 = in_state_.third_fire;
         }
-        out_state_.fire3 = 0;
         out_state_.up = in_state_.up;
         out_state_.down = in_state_.down;
         out_state_.left = in_state_.left;

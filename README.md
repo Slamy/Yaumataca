@@ -37,9 +37,11 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 	* PS4 DualShock
 	* Nintendo Switch Pro Controller
 	* Xbox One Controller
-	* No-name controller I had here
+	* Mega World International - USB Game Controllers (07b5:0314)
 
 ## TODO
+* Add mouse wheel for C64
+* Add 3. Fire button for more gamepads
 * HID Descriptor Parsing (generic USB joystick support, eventually)
 * Bluetooth (eventually)
 * Explain C1351 calibration using C64 tool
