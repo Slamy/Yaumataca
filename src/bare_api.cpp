@@ -134,7 +134,12 @@ static void open_vendor_interface(uint8_t daddr, tusb_desc_interface_t const *de
 
     tuh_vid_pid_get(daddr, &vid, &pid);
     // Xbox One Controller
-    if (vid == 0x045e && pid == 0x0b12) {
+
+    if ((vid == XBOX_VID1 || vid == XBOX_VID2 || vid == XBOX_VID3 || vid == XBOX_VID4 || vid == XBOX_VID5 || vid == XBOX_VID6) &&
+                       (pid == XBOX_ONE_PID1 || pid == XBOX_ONE_PID2 || pid == XBOX_ONE_PID3 || pid == XBOX_ONE_PID4 ||
+                        pid == XBOX_ONE_PID5 || pid == XBOX_ONE_PID6 || pid == XBOX_ONE_PID7 || pid == XBOX_ONE_PID8 ||
+                        pid == XBOX_ONE_PID9 || pid == XBOX_ONE_PID10 || pid == XBOX_ONE_PID11 || pid == XBOX_ONE_PID12 || 
+                        pid == XBOX_ONE_PID13 || pid == XBOX_ONE_PID14)){
         auto handler = std::make_shared<XboxOneHandler>();
 
         handler->open_vendor_interface(daddr, desc_itf, max_len);
