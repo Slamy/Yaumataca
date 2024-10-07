@@ -37,6 +37,7 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 	* PS4 DualShock
 	* Nintendo Switch Pro Controller
 	* Xbox One Controller
+	* Xbox Series S/X Controller
 	* Mega World International - USB Game Controllers (07b5:0314)
 
 ## TODO
