@@ -138,4 +138,7 @@ class PS3DualShockHandler : public DefaultHidHandler {
     }
 };
 
+// PS3 Original Dual Shock
 static HidHandlerBuilder builder(0x054c, 0x0268, []() { return std::make_unique<PS3DualShockHandler>(); }, nullptr);
+// PS3 Clone
+static HidHandlerBuilder builder2(0x0810, 0x0001, []() { return std::make_unique<PS3DualShockHandler>(); }, nullptr);
