@@ -48,6 +48,10 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     /// @brief Sink for gamepad reports
     std::shared_ptr<RunnableGamepadReportProcessor> gamepad_target_;
 
+    /// @brief Sink for gamepad reports to the sibling
+    /// Used to activate the FC3 hack on the other port
+    std::shared_ptr<GamePadFeatures> other_gamepad_target_;
+
     /// @brief Returns true if no mouse source is registered
     bool mouse_source_empty() {
         return mouse_source_.expired();
@@ -70,7 +74,8 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     }
 
     void process_gamepad_report(GamepadReport &report) override {
-
+        // If any button or D-Pad direction is pressend,
+        // do the switch
         if (report.button_pressed && active_ != kGamePad) {
             PRINTF("Switched to gamepad\n");
             active_ = kGamePad;
@@ -92,6 +97,7 @@ class JoystickMouseSwitcher : public ReportHubInterface {
         }
         if (mouse_target_ && active_ == kMouse) {
             mouse_target_->process_mouse_report(report);
+            other_gamepad_target_->final_cart_hack();
         }
     }
 

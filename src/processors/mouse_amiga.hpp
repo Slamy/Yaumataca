@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "config.h"
 #include "mouse_quadrature.hpp"
 #include "processors/interfaces.hpp"
 #include "utility.h"
@@ -74,10 +75,13 @@ class AmigaMouse : public QuadratureMouse {
                 last_state_ = state_;
                 mouse_target_->set_port_state(state_);
             }
+
+#if CONFIG_FORCE_MOUSE_BOOT_MODE == 0
             if (wheel_target_ && last_wheel_state_ != wheel_state_) {
                 last_wheel_state_ = wheel_state_;
                 wheel_target_->set_port_state(wheel_state_);
             }
+#endif
         }
     }
 };

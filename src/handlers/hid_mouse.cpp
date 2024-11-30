@@ -15,6 +15,7 @@
 #include "default_hid_handler.hpp"
 #include "field_extractor.hpp"
 #include "hid_handler_builder.hpp"
+#include "config.h"
 
 /**
  * @brief Generic handler of USB HID reports for mouses
@@ -42,6 +43,10 @@ class MouseReportHandler : public DefaultHidHandler {
         PRINTF("\n");
 
         hid_report_desc_valid_ = false;
+
+#if CONFIG_FORCE_MOUSE_BOOT_MODE == 1
+        return;
+#endif
 
         // Report Item 6.2.2.2 USB HID 1.11
         union TU_ATTR_PACKED {

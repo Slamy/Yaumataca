@@ -4,6 +4,7 @@ message (STATUS "CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
 
 option(CONFIG_DEBUG_PRINT "Activate debug prints on RTT")
 option(CONFIG_SWAP2BUTTON "Activate swapping controller ports with only left and right mouse button pressed")
+option(CONFIG_FORCE_MOUSE_BOOT_MODE "Disable HID report parsing. Disable Wheel")
 
 if (CONFIG_DEBUG_PRINT)
   set (LOGGER "RTT")

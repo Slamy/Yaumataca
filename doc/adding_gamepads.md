@@ -39,8 +39,8 @@ A possible output might be this:
     PortSwitcher + 20005070
     MouseModeSwitcher +
     MouseModeSwitcher +
-    GamepadAutoFire +
-    GamepadAutoFire +
+    GamePadFeatures +
+    GamePadFeatures +
     Set mouse mode 2
     C1351Converter +
     Set mouse mode 2

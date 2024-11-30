@@ -12,7 +12,7 @@
 
 #include "utility.h"
 
-#include "gamepad_autofire.hpp"
+#include "gamepad_features.hpp"
 #include "interfaces.hpp"
 #include "joystick_mouse_switcher.hpp"
 #include "led_task.hpp"
@@ -46,9 +46,9 @@ class Pipeline : public Runnable {
     std::shared_ptr<MouseModeSwitcher> mouse_switcher2_;
 
     /// @brief Auto fire implementation
-    std::shared_ptr<GamepadAutoFire> autofire1;
+    std::shared_ptr<GamePadFeatures> autofire1;
     /// @brief Auto fire implementation
-    std::shared_ptr<GamepadAutoFire> autofire2;
+    std::shared_ptr<GamePadFeatures> autofire2;
 
     /// @brief List of all objects that require constant attention
     std::vector<std::shared_ptr<Runnable>> runnables_;
@@ -93,8 +93,8 @@ class Pipeline : public Runnable {
 
         mouse_switcher1_ = std::make_shared<MouseModeSwitcher>();
         mouse_switcher2_ = std::make_shared<MouseModeSwitcher>();
-        autofire1 = std::make_shared<GamepadAutoFire>();
-        autofire2 = std::make_shared<GamepadAutoFire>();
+        autofire1 = std::make_shared<GamePadFeatures>();
+        autofire2 = std::make_shared<GamePadFeatures>();
 
         autofire1->set_swap_callback(std::bind(&Pipeline::swap_callback, this));
         autofire2->set_swap_callback(std::bind(&Pipeline::swap_callback, this));
@@ -103,9 +103,11 @@ class Pipeline : public Runnable {
 
         primary_mouse_switcher_->mouse_target_ = mouse_switcher1_;
         primary_mouse_switcher_->gamepad_target_ = autofire2;
+        primary_mouse_switcher_->other_gamepad_target_ = autofire1;
 
         primary_joystick_switcher_->mouse_target_ = mouse_switcher2_;
         primary_joystick_switcher_->gamepad_target_ = autofire1;
+        primary_joystick_switcher_->other_gamepad_target_ = autofire2;
 
         mouse_switcher1_->mouse_target_ = mouse_port_;
         mouse_switcher1_->wheel_target_ = joystick_port_;

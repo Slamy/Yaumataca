@@ -1,5 +1,5 @@
 /**
- * @file gamepad_autofire.hpp
+ * @file gamepad_features.hpp
  * @author André Zeps
  * @brief
  * @version 0.1
@@ -19,7 +19,7 @@
  * @brief Derives additional actions from Joystick input
  * Implements auto fire and detects intent to swap controller ports.
  */
-class GamepadAutoFire : public RunnableGamepadReportProcessor {
+class GamePadFeatures : public RunnableGamepadReportProcessor {
   private:
     /// @brief absolute time in milliseconds when auto fire was handled last
     uint32_t last_update{0};
@@ -31,6 +31,20 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
     ControllerPortState out_state_;
     /// @brief last output to controller port. used to check for changes
     ControllerPortState last_out_state_;
+
+    /**
+     * @brief Workaround for mouse issues with Final Cart III
+     *
+     * The FC3 module desktop mode muxes both controller ports
+     * to the POT X and Y lines of the SID.
+     * It is incompatible with two mice and the way, the Yaumataca simulates
+     * a C1351. This hack enforces to "let go" of these lines which
+     * indirectly might cause issues with C64 games that support
+     * additional fire buttons as those are always depressed now.
+     *
+     * Only effective in C64 mode
+     */
+    bool final_cart_hack_active_{false};
 
     /// @brief current state of autofire output
     bool auto_fire_state_{false};
@@ -70,11 +84,11 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
         last_out_state_.all_buttons = 0xff;
     }
 
-    GamepadAutoFire() {
-        PRINTF("GamepadAutoFire +\n");
+    GamePadFeatures() {
+        PRINTF("GamePadFeatures +\n");
     }
-    virtual ~GamepadAutoFire() {
-        PRINTF("GamepadAutoFire -\n");
+    virtual ~GamePadFeatures() {
+        PRINTF("GamePadFeatures -\n");
     }
 
     /**
@@ -92,6 +106,11 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
     std::shared_ptr<ControllerPortInterface> target_;
 
     void process_gamepad_report(GamepadReport &report) override {
+        if (final_cart_hack_active_ && (report.sec_fire || report.third_fire)) {
+            final_cart_hack_active_ = false;
+            PRINTF("Deactivate FC3 Hack!\n");
+        }
+
         in_state_ = report;
     }
 
@@ -125,8 +144,15 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
         }
 
         if (c64_mode_) {
-            out_state_.fire2 = !in_state_.sec_fire;
-            out_state_.fire3 = !in_state_.third_fire;
+            if (final_cart_hack_active_) {
+                // Let go of the lines to avoid draining them.
+                // Fixes problem with SID POT muxing and FC3
+                out_state_.fire2 = 0;
+                out_state_.fire3 = 0;
+            } else {
+                out_state_.fire2 = !in_state_.sec_fire;
+                out_state_.fire3 = !in_state_.third_fire;
+            }
         } else {
             out_state_.fire2 = in_state_.sec_fire;
             out_state_.fire3 = in_state_.third_fire;
@@ -140,6 +166,16 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
             last_out_state_ = out_state_;
             target_->set_port_state(out_state_);
         }
+    }
+
+    /// @brief Activates Final Cart III hack
+    /// Will be deactivated if 2. or 3. button is pressed
+    void final_cart_hack() {
+        if (!final_cart_hack_active_) {
+            PRINTF("Activate FC3 Hack!\n");
+        }
+
+        final_cart_hack_active_ = true;
     }
 
     void ensure_joystick_muxing() override {
