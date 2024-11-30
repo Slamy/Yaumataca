@@ -1,6 +1,6 @@
 # Yet another USB mouse and joystick to Amiga, Atari ST &amp; C64 Adapter
 
-Or in short Yaumataca. This device is one of many, that are allowing to use modern USB input devices
+Or in short Yaumataca. This device allows to use modern USB input devices
 on 80s style home computer controller ports. Being mechanical in nature, old gamepads and mouses
 degrade over time and replacements using modern variants might be required.
 
@@ -102,10 +102,19 @@ The Yaumataca is now ready for operation
 
 ### With SWD
 
-This assumes that you are using a CMSIS-DAP compatible programmer. It is suggested to use a second Pico board as one. This is possible using [the Picoprobe firmware](https://github.com/raspberrypi/picoprobe/releases).
+This assumes that you are using a CMSIS-DAP compatible programmer. It is suggested to use a second Pico board as one.
+This is possible using [the Picoprobe firmware](https://github.com/raspberrypi/picoprobe/releases).
 Keep in mind that an st-link cannot be used with the RP2040, even so both speak SWD.
 
 	openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 20000; program build/yaumataca.elf verify reset exit"
+
+Connect the picoprobe like so, to flash and debug the Yaumataca in standalone operation:
+
+![Example picture of an attached picoprobe to the Yaumataca](doc/picoprobe.jpg)
+
+Keep in mind to only connect 5V (purple wire) when operating the Yaumataca without any home computer attached!
+The 5V power supply is usually provided by the controller port and not from the PC!
+It must not be delivered by both the developer PC and the homecomputer at the same time!
 
 ## Recommended IDE
 
@@ -125,6 +134,18 @@ It is my goal to have everything properly documented and tested
 
 ## FAQ
 
+### My gamepad is not supported. What can I do?
+
+It depends. Some USB Gamepads are not following the HID standard, which is a huge
+issue. The PS4 Controller is one rare exception which just works.
+Bad examples are the Xbox One Controller and the Nintendo Switch Pro Controller.
+
+Both require some sort of handshaking to activate the data transfer.
+
+If you are lucky, you have a USB input device which just follows the HID standard.
+
+[Please follow this guide to add additional gamepads](doc/adding_gamepads.md)
+
 ### I can see PRINTF all over the place. Where is the output going to?
 
 This project makes use of "Segger RTT" which stores printed characters
@@ -135,6 +156,31 @@ have to be reserved for this.
 I don't recommend to use rtthost as it is slow. Please use VSCode instead.
 
 	rtthost -c rp2040
+
+There is also pyocd available, which is faster:
+
+	pyocd rtt --target rp2040
+
+### SWD is failing with "Info : DAP init failed"
+
+You have accidentally downloaded `debugprobe` and not `picoprobe`.
+This project uses the CMSIS-DAP variant of the picoprobe!
+One working version is [this one](https://github.com/raspberrypi/debugprobe/releases/tag/picoprobe-cmsis-v1.1).
+
+### I can't use the C1351 mouse on "Final Cartridge III"
+
+The design of the Yaumataca circuit might not be optimal, as it causes issues with the
+way the FC3 software is using the SID muxes in desktop mode. For some reason, both Controller Ports
+are muxed at the same time to the SIDs POT lines, so it can accept a mouse at either of the ports
+without additional configuration. This however means that no two mice are allowed to be connected
+at the same time.
+
+The Yaumataca design is not aware of this and uses a 10k pullup on POT X and POT Y to charge the measurement capacitor.
+This alone is not an issue. However, with the addition of the secondary fire buttons on the C64,
+this indeed causes issues as the high state is the pressed state while the grounded state
+is not pressed. This is opposite to how the Amiga handles its buttons.
+
+If this issue occurs, just disconnect one of the controller ports.
 
 ### Why is this not written in Rust?
 
