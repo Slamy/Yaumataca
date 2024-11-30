@@ -9,56 +9,13 @@ It would also be a good thing to have some knowledge about "Segger RTT" as this 
 
 You need a SWD debugger which is compatible with the RP Pico. If unsure, get another
 RP Pico and use [this firmware](https://github.com/raspberrypi/picoprobe/) to build a very cheap CMSIS-DAP debugger.
+Ensure it is the picoprobe with CMSIS support.
 
 I recommend VS Code as IDE for development and debugging.
 
-## VID and PID
-
-You need to know the VID and PID of the pad.
-Depending on the operating system, you can extract this info using your PC.
-
-Here an example from a Linux machine:
-
-    $ lsusb
-    Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-    Bus 001 Device 002: ID 0408:a060 Quanta Computer, Inc. HD Webcam
-    Bus 001 Device 005: ID 046d:c077 Logitech, Inc. Mouse
-    Bus 001 Device 007: ID 07b5:0314 Mega World International, Ltd USB Game Controllers
-    Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-
-The `07b5:0314` combination is what we are looking for here. The first is the Vendor ID and the second the Product ID.
-
-## Starting with a template
-
-Make a duplicate of [this rather simple and usable handler](../src/handlers/hid_impact.cpp) or instead of
-[this basic example which is only a template](../src/handlers/hid_skeleton.cpp).
-
-`hid_impact.cpp` is for a rather simple gamepad, I had around when this project was started.
-It might make sense to use this as inspiration.
-
-Rename the class `ImpactHidHandler` to something which makes sense for your device.
-This gamepad has "impact" written on it, so I thought it made sense.
-
-Look for the `HidHandlerBuilder` in that file and replace the VID and PID.
-
-Don't forget to add this file to the [CMakeLists.txt](../CMakeLists.txt) next to the other handlers.
-
-## Checking the communication of the gamepad
-
-The class has a method which needs to be implemented. It is called on every report the input delivers to us:
-
-```c++
-    void process_report(std::span<const uint8_t> d) {
-
-    }
-
-```
-
-It makes sense to start with some debugging messages to analyze the reports for their structure.
-
 ## Enabling Debugging messages
 
-Edit the CMake cache and enable `CONFIG_DEBUG_PRINT` to activate RTT output.
+Edit the CMake Cache and enable `CONFIG_DEBUG_PRINT` to activate RTT output.
 If you run the application inside VS Code, it will activate the RTT console and you can see your output.
 
 If you don't want to use the VSCode internal RTT Console, you can use rtthost too:
@@ -89,13 +46,60 @@ A possible output might be this:
     C1351 calibration -1555 -1316 -1412 -1177
     R 0000 011
     L 0000 011
+
+
+## Checking for standard HID reports
+
+You need to know the VID and PID of the pad to continue.
+Also, we would like to know whether the gamepad is transmitting some report data.
+With the debugging output at hand, connect a gamepad:
+
     HID device address = 1, instance = 0 is mounted
-    VID = 07b5, PID = 0314
+    VID = 046d, PID = c20c
     HID has 1 reports 0 4 1
-    Primary joystick
     Device attached, address = 1
     HID device address = 1 is mounted
-    VID = 07b5, PID = 0314
+    VID = 046d, PID = c20c
+
+This is good! We know have knowledge about the VID and the PID.
+Press some buttons on your gamepad now.
+
+    Report: 00 80 80
+    Report: 04 80 80
+    Report: 00 80 80
+    Report: 04 80 80
+    Report: 00 80 80
+    Report: 01 80 80
+    Report: 03 80 80
+
+This is a good thing. This is an indication that your gamepad is providing reports of some sort without requesting
+it to do so via non-standard methods.
+The output you see is a hex representation of the HID report. Bits are flipping when you press buttons.
+
+## Starting with a template
+
+Make a duplicate of [this rather simple and usable handler](../src/handlers/hid_impact.cpp).
+
+`hid_impact.cpp` is for a rather simple gamepad, I had around when this project was started.
+It might make sense to use this as inspiration.
+
+Rename the class `ImpactHidHandler` to something which makes sense for your device.
+This gamepad has "impact" written on it, so I thought it made sense.
+
+Look for the `HidHandlerBuilder` in that file and replace the VID and PID.
+
+Don't forget to add this file to the [CMakeLists.txt](../CMakeLists.txt) next to the other handlers.
+
+
+The class has a method which needs to be implemented. It is called on every report the input delivers to us:
+
+```c++
+    void process_report(std::span<const uint8_t> d) {
+
+    }
+```
+
+It makes sense to start with some debugging messages to analyze the reports for their structure.
 
 As you can see, a USB device was detected!
 Do you have activated the PRINTF inside your handler? Something like this?
@@ -114,10 +118,6 @@ Something like this?
     XYZ:  80 80 80 80 07 00
     XYZ:  80 80 80 80 00 00
     XYZ:  80 80 80 80 03 00
-
-If yes, this is very good. This is an indication that your gamepad is providing reports of some sort without requesting
-it to do so via non-standard methods.
-The output you see is a hex representation of the HID report. Bits are flipping when you press buttons.
 
 ## Mapping the buttons of the gamepad
 
@@ -151,7 +151,7 @@ struct __attribute__((packed)) Report {
 };
 ```
 
-The idle state of this controller looks like this:
+The idle state of this specific controller looks like this:
 
             dat->coolie_hat
             | dat->button_left
@@ -185,6 +185,8 @@ Now - by observing the change - I know the bit position of this specific button!
 
 Keep in mind that some gamepads don't implement the D-Pad as 4 buttons but instead as a Coolie-Hat with one value for each direction.
 `hid_impact.cpp` is one example for such a case.
+
+There are also gamepads around which are implementing the D-Pad as virtual analog axes. The DragonRise Controller `(0079:0011)` is one of those examples.
 
 You now need to fill out
 ```c++
