@@ -133,9 +133,10 @@ class PS4DualShockHandler : public DefaultHidHandler {
 };
 
 // https://github.com/felis/USB_Host_Shield_2.0/blob/master/PS4USB.h
-#define PS4_VID 0x054C      // Sony Corporation
-#define PS4_PID 0x05C4      // PS4 Controller
-#define PS4_PID_SLIM 0x09CC // PS4 Slim Controller
+
+#define PS4_VID 0x054C      ///< Sony Corporation
+#define PS4_PID 0x05C4      ///< PS4 Controller
+#define PS4_PID_SLIM 0x09CC ///< PS4 Slim Controller
 
 static HidHandlerBuilder
     builder_normal(PS4_VID, PS4_PID, []() { return std::make_unique<PS4DualShockHandler>(); }, nullptr);

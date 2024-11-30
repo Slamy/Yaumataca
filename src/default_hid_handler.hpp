@@ -31,6 +31,10 @@ class DefaultHidHandler : public HidHandlerInterface {
     std::shared_ptr<ReportHubInterface> target_;
 
   public:
+    void parse_hid_report_descriptor(uint8_t const *, uint16_t) override {
+        // Just ignore it...
+    }
+
     void set_target(std::shared_ptr<ReportHubInterface> target) override {
         target_ = target;
     }
@@ -43,5 +47,5 @@ class DefaultHidHandler : public HidHandlerInterface {
         }
     }
 
-    void run() override{};
+    void run() override {};
 };

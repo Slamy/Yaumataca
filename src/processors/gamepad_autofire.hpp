@@ -49,9 +49,21 @@ class GamepadAutoFire : public RunnableGamepadReportProcessor {
     /// @brief Called when select button sis held for some time
     std::function<void()> swap_callback_;
 
+    /// @brief True for C64 mode. Refer to \ref set_c64_mode
     bool c64_mode_{false};
 
   public:
+    /**
+     * @brief C64 type handling
+     *
+     * The 2. and 3. fire buttons are different
+     * for the C64 compared to Amiga and Atari ST.
+     * The pressed state is high instead of low.
+     * Activating the C64 mode abstracts
+     * this behaviour away in this class.
+     *
+     * @param m True for C64 mode
+     */
     void set_c64_mode(bool m) {
         c64_mode_ = m;
         // enforce writing the state

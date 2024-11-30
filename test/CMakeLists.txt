@@ -29,6 +29,7 @@ set_directory_properties(PROPERTIES
 
 add_executable(unittest
     ${CMAKE_CURRENT_SOURCE_DIR}/test_pipeline.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_field_extract.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/mock_mouse_c1351.cpp
 )
 

@@ -65,6 +65,7 @@ void tuh_hid_mount_cb(uint8_t dev_addr, uint8_t instance, uint8_t const *desc_re
 
     if (hid_info[instance].handler) {
         gbl_pipeline->integrate_handler(hid_info[instance].handler);
+        hid_info[instance].handler->parse_hid_report_descriptor(desc_report, desc_len);
         hid_info[instance].handler->setup_reception(dev_addr, instance);
     } else {
         // request to receive report

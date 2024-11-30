@@ -11,16 +11,19 @@
 
 #pragma once
 
-#include "pico/types.h"
 #include <cstdint>
 #include <memory>
 #include <span>
+
+#include "pico/types.h"
 
 /// Types of reports which are supported
 enum ReportType { kMouse, kGamePad };
 
 /**
  * @brief Reduction of a Mouse HID Report to the required essentials.
+ *
+ * This format is also the typical expected one for Boot mode
  */
 class MouseReport {
   public:
@@ -148,6 +151,13 @@ class ReportSourceInterface : public Runnable {
 class HidHandlerInterface : public ReportSourceInterface {
   public:
     /**
+     * @brief Called after readout of the HID Report Descriptor
+     *
+     * Allows detection of the HID Report layout
+     */
+    virtual void parse_hid_report_descriptor(uint8_t const *desc_report, uint16_t desc_len) = 0;
+
+    /**
      * @brief Called after the detection of a HID endpoint
      *
      * Allows further configuration.
@@ -159,6 +169,8 @@ class HidHandlerInterface : public ReportSourceInterface {
 
     /**
      * @brief Called after reception of HID reports.
+     *
+     * Shall parse the incoming button and movement data
      *
      * @param report The received report
      */

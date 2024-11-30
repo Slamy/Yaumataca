@@ -55,9 +55,11 @@ class MockHidHandler : public HidHandlerInterface {
     }
     std::shared_ptr<ReportHubInterface> target_;
 
-    void setup_reception(int8_t dev_addr, uint8_t instance) override{};
+    void parse_hid_report_descriptor(uint8_t const *desc_report, uint16_t desc_len) override {};
 
-    void process_report(std::span<const uint8_t> report) override{};
+    void setup_reception(int8_t dev_addr, uint8_t instance) override {};
+
+    void process_report(std::span<const uint8_t> report) override {};
 
     ReportType expected_report() {
         return type_;
@@ -66,7 +68,7 @@ class MockHidHandler : public HidHandlerInterface {
         target_ = target;
     };
 
-    void run() override{};
+    void run() override {};
 };
 PIO C1351Converter::pio_{nullptr};
 uint C1351Converter::offset_{0};
