@@ -39,6 +39,7 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 	* Xbox One Controller
 	* Xbox Series S/X Controller
 	* Mega World International - USB Game Controllers (07b5:0314)
+	* DragonInc Hizue Gamepad (0079:0011)
 
 ## TODO
 * Add mouse wheel for C64

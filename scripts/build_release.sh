@@ -21,8 +21,8 @@ cp build_release/yaumataca.uf2 release/
 # Build the C64 calibration tool
 cl65 -O -t c64 c64tool/calibration.c -o release/calib.prg
 
-# Package everything
+# Package everything into a flat zip
 rm -f *.zip
-zip yaumataca_$(git describe --tags --dirty).zip release/*
+zip -j yaumataca_$(git describe --tags --dirty).zip release/*
 
 echo " --- Finished ---"
