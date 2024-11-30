@@ -172,7 +172,7 @@ One working version is [this one](https://github.com/raspberrypi/debugprobe/rele
 
 The design of the Yaumataca circuit might not be optimal, as it causes issues with the
 way the FC3 software is using the SID muxes in desktop mode. For some reason, both Controller Ports
-are muxed at the same time to the SIDs POT lines, so it can accept a mouse either of the ports
+are muxed at the same time to the SIDs POT lines, so it can accept a mouse at either of the ports
 without additional configuration. This however means that no two mice are allowed to be connected
 at the same time.
 
@@ -180,6 +180,8 @@ The Yaumataca design is not aware of this and uses a 10k pullup on POT X and POT
 This alone is not an issue. However, with the addition of the secondary fire buttons on the C64,
 this indeed causes issues as the high state is the pressed state while the grounded state
 is not pressed. This is opposite to how the Amiga handles its buttons.
+
+If this issue occurs, just disconnect one of the controller ports.
 
 ### Why is this not written in Rust?
 

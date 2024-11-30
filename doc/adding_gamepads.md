@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-If you don't feel well with programming in C, stop reading now to avoid unnecessary pain.
+If you don't feel confident with programming in C, stop reading now to avoid unnecessary pain.
 
 You need some basic knowledge about C++, CMake and cross compilation.
 It would also be a good thing to have some knowledge about "Segger RTT" as this is the primary method for debugging output.
@@ -21,6 +21,10 @@ If you run the application inside VS Code, it will activate the RTT console and 
 If you don't want to use the VSCode internal RTT Console, you can use rtthost too:
 
     rtthost -c rp2040
+
+Or pyocd:
+
+	pyocd rtt --target rp2040
 
 A possible output might be this:
 
@@ -47,7 +51,6 @@ A possible output might be this:
     R 0000 011
     L 0000 011
 
-
 ## Checking for standard HID reports
 
 You need to know the VID and PID of the pad to continue.
@@ -61,7 +64,7 @@ With the debugging output at hand, connect a gamepad:
     HID device address = 1 is mounted
     VID = 046d, PID = c20c
 
-This is good! We know have knowledge about the VID and the PID.
+This is good! We now have knowledge about the VID and the PID.
 Press some buttons on your gamepad now.
 
     Report: 00 80 80
@@ -72,7 +75,7 @@ Press some buttons on your gamepad now.
     Report: 01 80 80
     Report: 03 80 80
 
-This is a good thing. This is an indication that your gamepad is providing reports of some sort without requesting
+This is a good thing! This is an indication that your gamepad is providing reports of some sort without requesting
 it to do so via non-standard methods.
 The output you see is a hex representation of the HID report. Bits are flipping when you press buttons.
 
@@ -80,28 +83,24 @@ The output you see is a hex representation of the HID report. Bits are flipping 
 
 Make a duplicate of [this rather simple and usable handler](../src/handlers/hid_impact.cpp).
 
-`hid_impact.cpp` is for a rather simple gamepad, I had around when this project was started.
+`hid_impact.cpp` is for a rather old gamepad, I had around when this project was started.
 It might make sense to use this as inspiration.
 
 Rename the class `ImpactHidHandler` to something which makes sense for your device.
-This gamepad has "impact" written on it, so I thought it made sense.
+This gamepad has "impact" written on it, so I thought it made sense to call it that.
 
-Look for the `HidHandlerBuilder` in that file and replace the VID and PID.
+Look for the `HidHandlerBuilder` at the bottom of the file and replace the VID and PID.
 
 Don't forget to add this file to the [CMakeLists.txt](../CMakeLists.txt) next to the other handlers.
 
-
-The class has a method which needs to be implemented. It is called on every report the input delivers to us:
+The class has a method which needs to be implemented. It is called on every report, the input delivers to us:
 
 ```c++
-    void process_report(std::span<const uint8_t> d) {
-
-    }
+void process_report(std::span<const uint8_t> d) {
+}
 ```
 
 It makes sense to start with some debugging messages to analyze the reports for their structure.
-
-As you can see, a USB device was detected!
 Do you have activated the PRINTF inside your handler? Something like this?
 
     PRINTF("XYZ: ");
@@ -122,7 +121,7 @@ Something like this?
 ## Mapping the buttons of the gamepad
 
 What to do with that data? Let's use `hid_impact.cpp` as an example.
-Every entry in the `Report` structure marks a set of bits, giving a name to them which we can use later on for parsing.
+Every line in the `Report` structure marks a set of bits, giving a name to them which we can later use for parsing.
 
 ```c++
 struct __attribute__((packed)) Report {
@@ -151,21 +150,6 @@ struct __attribute__((packed)) Report {
 };
 ```
 
-The idle state of this specific controller looks like this:
-
-            dat->coolie_hat
-            | dat->button_left
-            | |dat->button_right
-            | ||data->button_top
-            | |||data->button_bottom
-            | |||| Byte 0
-            | |||| |  Byte 1
-            | |||| |  |  Byte 2
-            | |||| |  |  |  Byte 3
-            | |||| |  |  |  |  Byte 4
-            | |||| |  |  |  |  |  Byte 5
-    Impact: 0 0000 80 80 80 80 00 00
-
 With this controller, the first 4 bytes are an unsigned representation of both analog sticks with 0x80 being the center state.
 
 By moving the left stick, the software will print this:
@@ -186,7 +170,8 @@ Now - by observing the change - I know the bit position of this specific button!
 Keep in mind that some gamepads don't implement the D-Pad as 4 buttons but instead as a Coolie-Hat with one value for each direction.
 `hid_impact.cpp` is one example for such a case.
 
-There are also gamepads around which are implementing the D-Pad as virtual analog axes. The DragonRise Controller `(0079:0011)` is one of those examples.
+There are also gamepads around which are implementing the D-Pad as virtual analog axes.
+The DragonRise Controller `(0079:0011)` is one of those examples.
 
 You now need to fill out
 ```c++
@@ -195,7 +180,7 @@ struct __attribute__((packed)) Report {
 ```
 
 Get yourself some inspiration from the other handlers. Get creative!
-The `GamepadReport` must be filled with button states.
+The `GamepadReport` must be filled with button states:
 
 ```c++
 bool fire : 1;          ///< Fire1
@@ -245,7 +230,7 @@ By pressing buttons you can see whether these match your expectations.
 
 Some controllers require a non-standard protocol. You may need to investigate now, why this happens.
 
-The project https://github.com/felis/USB_Host_Shield_2.0 might provide you with some insight as this library is rather complete.
+The project https://github.com/felis/USB_Host_Shield_2.0 might provide you with some insight as this library is rather feature-complete.
 
 ## What to do if everything works?
 
