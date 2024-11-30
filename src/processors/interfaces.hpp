@@ -50,15 +50,15 @@ class GamepadReport {
   public:
     union {
         struct {
-            bool fire : 1;
-            bool sec_fire : 1;
-            bool third_fire : 1;
-            bool auto_fire : 1;
-            bool up : 1;
-            bool down : 1;
-            bool left : 1;
-            bool right : 1;
-            bool joystick_swap : 1;
+            bool fire : 1;          ///< Fire1
+            bool sec_fire : 1;      ///< Fire2
+            bool third_fire : 1;    ///< Fire3
+            bool auto_fire : 1;     ///< Turbo Fire1
+            bool up : 1;            ///< D-Pad Up
+            bool down : 1;          ///< D-Pad Down
+            bool left : 1;          ///< D-Pad Left
+            bool right : 1;         ///< D-Pad Right
+            bool joystick_swap : 1; ///< If pressed for a second, both controller ports swap
         };
         uint32_t button_pressed{0};
     };
