@@ -70,7 +70,6 @@ Here an example of the PCB inside the case.
 Here the PCB side by side with the prototype.
 ![Photo of Yaumataca build from PCB and perfboard](doc/pcb_vs_perfboard.jpg)
 
-
 ## How to build the firmware
 
 Ensure that the submodules are also cloned.
@@ -80,6 +79,10 @@ Ensure that the submodules are also cloned.
 	cd build
 	cmake ..
 	make
+
+Alternatively there is also a small script which builds and packages the software as a zip file for upload.
+
+	./scripts/build_release.sh
 
 ## How to flash
 
@@ -104,11 +107,34 @@ Keep in mind that an st-link cannot be used with the RP2040, even so both speak 
 
 	openocd -f interface/cmsis-dap.cfg -f target/rp2040.cfg -c "adapter speed 20000; program build/yaumataca.elf verify reset exit"
 
+## Recommended IDE
+
+Please use vscode and open the root folder with it.
+This gives access to the already existing debugging targets.
+
 ## System architecture
 
 ![uml diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/Slamy/Yaumataca/develop/doc/pipeline.plantuml)
 
+## Doxygen and Unittests
+
+It is my goal to have everything properly documented and tested
+
+	scripts/check_doxygen.sh
+	scripts/unittest.sh
+
 ## FAQ
+
+### I can see PRINTF all over the place. Where is the output going to?
+
+This project makes use of "Segger RTT" which stores printed characters
+inside a small buffer which can be displayed over SWD.
+It has advantages compared to the UART as no additional GPIOs
+have to be reserved for this.
+
+I don't recommend to use rtthost as it is slow. Please use VSCode instead.
+
+	rtthost -c rp2040
 
 ### Why is this not written in Rust?
 

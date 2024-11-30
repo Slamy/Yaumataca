@@ -242,6 +242,7 @@ class MouseReportHandler : public DefaultHidHandler {
                         PRINTF("  ");
 
                     const char *text{""};
+                    std::ignore = text;
                     if (ri_collection_depth == 2) {
                         usages_level2.push(data8);
 

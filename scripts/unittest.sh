@@ -3,6 +3,9 @@ SCRIPT=$(realpath "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 cd $SCRIPTPATH/..
 
-doxygen > /dev/null || echo "Failed!"
+cmake -S test -B build_unittest 
+cmake --build build_unittest -j
+cd build_unittest
+./unittest
 
 echo " --- Finished ---"
