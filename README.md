@@ -39,6 +39,7 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 	* Xbox One Controller
 	* Xbox Series S/X Controller
 	* Mega World International - USB Game Controllers (07b5:0314)
+	* DragonInc Hizue Gamepad (0079:0011)
 
 ## TODO
 * Add mouse wheel for C64
@@ -113,8 +114,8 @@ Connect the picoprobe like so, to flash and debug the Yaumataca in standalone op
 ![Example picture of an attached picoprobe to the Yaumataca](doc/picoprobe.jpg)
 
 Keep in mind to only connect 5V (purple wire) when operating the Yaumataca without any home computer attached!
-The 5V power supply is usually provided using the controller port and not from the PC!
-It must not be delivered by the developer PC and the homecomputer at the same time!
+The 5V power supply is usually provided by the controller port and not from the PC!
+It must not be delivered by both the developer PC and the homecomputer at the same time!
 
 ## Recommended IDE
 
@@ -170,12 +171,12 @@ One working version is [this one](https://github.com/raspberrypi/debugprobe/rele
 ### I can't use the C1351 mouse on "Final Cartridge III"
 
 The design of the Yaumataca circuit might not be optimal, as it causes issues with the
-way the FC3 is using the SID muxes in desktop mode. For some reason, both Controller Ports
-are muxed at the same time to the SIDs POT lines so it can accept a mouse at one of the ports
-without further configuration. This however means that no two mice are allowed to be connected
+way the FC3 software is using the SID muxes in desktop mode. For some reason, both Controller Ports
+are muxed at the same time to the SIDs POT lines, so it can accept a mouse either of the ports
+without additional configuration. This however means that no two mice are allowed to be connected
 at the same time.
 
-The Yaumataca design is not aware of this and uses a 10k pullup on POT X and POT Y to charge the capacitor.
+The Yaumataca design is not aware of this and uses a 10k pullup on POT X and POT Y to charge the measurement capacitor.
 This alone is not an issue. However, with the addition of the secondary fire buttons on the C64,
 this indeed causes issues as the high state is the pressed state while the grounded state
 is not pressed. This is opposite to how the Amiga handles its buttons.
