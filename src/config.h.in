@@ -1,0 +1,3 @@
+#pragma once
+
+#cmakedefine01 CONFIG_SWAP2BUTTON

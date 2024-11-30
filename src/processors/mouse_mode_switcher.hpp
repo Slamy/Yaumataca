@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "config.h"
 #include "interfaces.hpp"
 #include "mouse_amiga.hpp"
 #include "mouse_atarist.hpp"
@@ -111,10 +112,23 @@ class MouseModeSwitcher : public RunnableMouseReportProcessor {
         impl_->ensure_mouse_muxing();
     }
 
+#ifndef CONFIG_SWAP2BUTTON
+#error "CONFIG_SWAP2BUTTON is not defined"
+#endif
+
+/// Duration in milliseconds to hold the swap combination until the swap is performed
+#if CONFIG_SWAP2BUTTON == 1
+    static constexpr uint32_t kSwapHoldDuration{500};
+#else
+    static constexpr uint32_t kSwapHoldDuration{300};
+#endif
+
     void process_mouse_report(MouseReport &mouse_report) override {
-
+#if CONFIG_SWAP2BUTTON == 1
+        bool swap_combi = (mouse_report.left && mouse_report.right);
+#else
         bool swap_combi = (mouse_report.left && mouse_report.middle && mouse_report.right);
-
+#endif
         if (!swap_combination_pressed_ && swap_combi) {
             swap_press_start_time = board_millis();
             swap_performed_ = false;
@@ -130,7 +144,7 @@ class MouseModeSwitcher : public RunnableMouseReportProcessor {
         if (swap_combination_pressed_ && !swap_performed_) {
             uint32_t now = board_millis();
 
-            if ((now - swap_press_start_time) > 300) {
+            if ((now - swap_press_start_time) > kSwapHoldDuration) {
                 PRINTF("Mouse Swap!\n");
                 swap_performed_ = true;
                 if (swap_callback_) {

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.17)
 message (STATUS "CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}")
 
 option(CONFIG_DEBUG_PRINT "Activate debug prints on RTT")
+option(CONFIG_SWAP2BUTTON "Activate swapping controller ports with only left and right mouse button pressed")
 
 if (CONFIG_DEBUG_PRINT)
   set (LOGGER "RTT")
@@ -23,6 +24,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 # Checks this example is valid for the family and initializes the project
 family_initialize_project(${PROJECT} ${CMAKE_CURRENT_LIST_DIR})
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/config.h.in" "config.h")
 
 add_executable(${PROJECT})
 

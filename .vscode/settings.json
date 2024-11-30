@@ -86,7 +86,8 @@
         "stdint.h": "c",
         "stdbool.h": "c",
         "ctype.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "*.in": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/arm-none-eabi-gcc",
     "editor.formatOnSave": true,
