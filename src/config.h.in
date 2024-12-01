@@ -1,5 +1,10 @@
 #pragma once
 
+/// Activate swapping controller ports with only left and right mouse button pressed
 #cmakedefine01 CONFIG_SWAP2BUTTON
 
+/// Disable HID report parsing. Disables wheel as well
 #cmakedefine01 CONFIG_FORCE_MOUSE_BOOT_MODE
+
+/// Disables wheel mode, which affects the other unrelated controller port
+#cmakedefine01 CONFIG_DISABLE_AMIGA_WHEELBUSMOUSE

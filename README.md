@@ -42,7 +42,8 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 	* DragonInc Hizue Gamepad (0079:0011)
 
 ## TODO
-* Add mouse wheel for C64
+* Amiga Mode: Add support for newmouse or Micromys protocol
+	* Avoids necessity for manipulation of the unrelated joystick port
 * Add 3. Fire button for more gamepads
 * HID Descriptor Parsing (generic USB joystick support, eventually)
 * Bluetooth (eventually)
@@ -205,3 +206,5 @@ https://www.c64-wiki.de/wiki/Maus
 Information about the Commodore 1351:<br>
 http://sensi.org/~svo/%5Bm%5Douse/
 
+Micromys C64 and Amiga Mouse Protocol:<br>
+https://wiki.icomp.de/wiki/Micromys_Protocol

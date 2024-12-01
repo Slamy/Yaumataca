@@ -67,8 +67,10 @@ class MouseModeSwitcher : public RunnableMouseReportProcessor {
     /// @brief Destination of mouse buttons and quadrature signals
     std::shared_ptr<ControllerPortInterface> mouse_target_;
 
+#if CONFIG_DISABLE_AMIGA_WHEELBUSMOUSE == 0
     /// @brief Destination of wheel quadrature signals
     std::shared_ptr<ControllerPortInterface> wheel_target_;
+#endif
 
     /// @brief Provides number of mouse types supported
     /// @return number of mouse types
@@ -88,7 +90,9 @@ class MouseModeSwitcher : public RunnableMouseReportProcessor {
         case 0: {
             auto impl = std::make_shared<AmigaMouse>();
             impl->mouse_target_ = mouse_target_;
+#if CONFIG_DISABLE_AMIGA_WHEELBUSMOUSE == 0
             impl->wheel_target_ = wheel_target_;
+#endif
             impl_ = impl;
             break;
         }

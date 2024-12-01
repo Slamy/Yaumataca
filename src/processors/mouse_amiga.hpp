@@ -76,7 +76,7 @@ class AmigaMouse : public QuadratureMouse {
                 mouse_target_->set_port_state(state_);
             }
 
-#if CONFIG_FORCE_MOUSE_BOOT_MODE == 0
+#if CONFIG_DISABLE_AMIGA_WHEELBUSMOUSE == 0
             if (wheel_target_ && last_wheel_state_ != wheel_state_) {
                 last_wheel_state_ = wheel_state_;
                 wheel_target_->set_port_state(wheel_state_);

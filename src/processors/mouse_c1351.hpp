@@ -77,6 +77,15 @@ class C1351Converter : public RunnableMouseReportProcessor {
     int32_t mouse_accumulator_x{0};
     /// @brief vertical movement still to perform using PIO
     int32_t mouse_accumulator_y{0};
+    /// @brief Wheel movement still to perform using pulses
+    int32_t mouse_accumulator_wheel{0};
+
+    /// @brief Absolute time in milliseconds when the wheel signal was changed last
+    /// According to the protocol, it must be held for 50ms
+    uint32_t mouse_wheel_pulse_last_update{0};
+    /// @brief Current wheel output pulse state
+    /// If true, the port is drained right now
+    bool mouse_wheel_pulse_state{false};
 
     /// @brief current POTX value we want to achieve
     uint32_t value_pot_x_{30};
@@ -87,6 +96,10 @@ class C1351Converter : public RunnableMouseReportProcessor {
     ControllerPortState state_;
     /// @brief last mouse button state. used to check for changes
     ControllerPortState last_state_;
+
+    /// @brief Number of milliseconds the Wheel direction has to be kept stable
+    /// According to https://wiki.icomp.de/wiki/Micromys_Protocol
+    static constexpr uint32_t kWheelPulseLength{50};
 
     /// @brief number of microseconds the SID will drain the capacitor
     static constexpr int32_t kDrainLength = 256;
@@ -321,6 +334,8 @@ class C1351Converter : public RunnableMouseReportProcessor {
         case OperatingState::kEffective:
             mouse_accumulator_x += mouse_report.relx;
             mouse_accumulator_y -= mouse_report.rely;
+            mouse_accumulator_wheel += mouse_report.wheel;
+
             if (check_calibration_mode_enter_criteria()) {
                 operating_state_ = OperatingState::kCalibratePotX64;
                 PRINTF("To kCalibratePotX64\n");
@@ -440,6 +455,44 @@ class C1351Converter : public RunnableMouseReportProcessor {
                 break;
             }
             }
+        }
+
+        // Handle Micromys Wheel
+        if (mouse_wheel_pulse_state) {
+            // Right now, we are draining either Left or Right
+            uint32_t now = board_millis();
+            uint32_t time_diff = now - mouse_wheel_pulse_last_update;
+
+            // Release the drain after 50ms
+            if (time_diff > kWheelPulseLength) {
+                mouse_wheel_pulse_last_update = now;
+                mouse_wheel_pulse_state = false;
+
+                state_.left = 0;
+                state_.right = 0;
+            }
+        } else if (mouse_accumulator_wheel != 0) {
+            // There are pulses to make as the Accumulator is not 0
+            uint32_t now = board_millis();
+            uint32_t time_diff = now - mouse_wheel_pulse_last_update;
+
+            if (time_diff > kWheelPulseLength) {
+                mouse_wheel_pulse_last_update = now;
+
+                mouse_wheel_pulse_state = true;
+                if (mouse_accumulator_wheel > 0) {
+                    state_.left = 1; // Pulse Wheel Up
+                    mouse_accumulator_wheel--;
+                } else {
+                    state_.right = 1; // Pulse Wheel Down
+                    mouse_accumulator_wheel++;
+                }
+            }
+        }
+
+        if (target_ && last_state_ != state_) {
+            last_state_ = state_;
+            target_->set_port_state(state_);
         }
     }
 };

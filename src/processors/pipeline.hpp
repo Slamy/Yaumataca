@@ -110,7 +110,9 @@ class Pipeline : public Runnable {
         primary_joystick_switcher_->other_gamepad_target_ = autofire2;
 
         mouse_switcher1_->mouse_target_ = mouse_port_;
+#if CONFIG_DISABLE_AMIGA_WHEELBUSMOUSE == 0
         mouse_switcher1_->wheel_target_ = joystick_port_;
+#endif
         mouse_switcher2_->mouse_target_ = joystick_port_;
 
         autofire2->target_ = mouse_port_;

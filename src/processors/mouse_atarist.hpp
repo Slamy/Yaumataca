@@ -58,7 +58,6 @@ class AtariStMouse : public QuadratureMouse {
             state_.right = v_state.second;
 
             if (mouse_target_ && last_state_ != state_) {
-
                 last_state_ = state_;
                 mouse_target_->set_port_state(state_);
             }
