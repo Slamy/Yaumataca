@@ -49,14 +49,15 @@ std::optional<Pipeline> gbl_pipeline;
 int main() {
     board_init();
 
-    printf("Yaumataca says hello!\n");
+    PRINTF("Yaumataca says hello!\n");
 
     // init host stack on configured roothub port
     tuh_init(BOARD_TUH_RHPORT);
 
-    gbl_pipeline.emplace(LeftControllerPort::getInstance(), RightControllerPort::getInstance());
     C1351Converter::load_calibration_data();
     C1351Converter::setup_pio();
+
+    gbl_pipeline.emplace(LeftControllerPort::getInstance(), RightControllerPort::getInstance());
 
     for (;;) {
         // tinyusb host task

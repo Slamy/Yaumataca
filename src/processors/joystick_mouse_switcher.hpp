@@ -19,7 +19,7 @@
 class JoystickMouseSwitcher : public ReportHubInterface {
   private:
     /// @brief Currently activated device type. Mouse or Joystick
-    ReportType active_ = {kGamePad};
+    ReportType active_;
 
     /**
      * @brief Minimum relative movement to switch to mouse
@@ -35,7 +35,12 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     std::weak_ptr<ReportSourceInterface> joystick_source_;
 
   public:
-    JoystickMouseSwitcher() {
+    /**
+     * @brief Construct a new Joystick Mouse Switcher
+     *
+     * @param initial_report_type   Report type to start with
+     */
+    JoystickMouseSwitcher(ReportType initial_report_type) : active_(initial_report_type) {
         PRINTF("JoystickMouseSwitcher +\n");
     }
     virtual ~JoystickMouseSwitcher() {

@@ -431,10 +431,15 @@ TEST(Pipeline, DualJoystick) {
     std::shared_ptr<MockControllerPort> port_joy = std::make_shared<MockControllerPort>();
     std::shared_ptr<MockControllerPort> port_mouse = std::make_shared<MockControllerPort>();
 
-    EXPECT_CALL(*port_joy, configure_gpios);
-    EXPECT_CALL(*port_mouse, configure_gpios);
+    // At the beginning, then the wheel for mouse and ensure_muxing again
+    EXPECT_CALL(*port_joy, configure_gpios).Times(3);
+    // At the beginning, then quadrature mouse
+    EXPECT_CALL(*port_mouse, configure_gpios).Times(2);
 
     auto pipeline = std::make_unique<Pipeline>(port_joy, port_mouse);
+
+    // The switch
+    EXPECT_CALL(*port_mouse, configure_gpios);
 
     std::shared_ptr<MockHidHandler> mock_joy1 = std::make_shared<MockHidHandler>(ReportType::kGamePad);
     std::shared_ptr<MockHidHandler> mock_joy2 = std::make_shared<MockHidHandler>(ReportType::kGamePad);
@@ -448,7 +453,7 @@ TEST(Pipeline, DualJoystick) {
         EXPECT_CALL(*port_joy, set_port_state(expected_state));
 
         GamepadReport report1;
-        report1.fire = 5;
+        report1.fire = 1;
         mock_joy1->target_->process_gamepad_report(report1);
     }
     {
@@ -457,7 +462,7 @@ TEST(Pipeline, DualJoystick) {
         EXPECT_CALL(*port_mouse, set_port_state(expected_state));
 
         GamepadReport report2;
-        report2.up = 5;
+        report2.up = 1;
         mock_joy2->target_->process_gamepad_report(report2);
     }
     pipeline->run();

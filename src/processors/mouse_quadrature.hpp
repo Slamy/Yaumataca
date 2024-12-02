@@ -39,9 +39,10 @@ class QuadratureMouse : public RunnableMouseReportProcessor {
 
     /// @brief Destination of mouse buttons and quadrature signals
     std::shared_ptr<ControllerPortInterface> mouse_target_;
-
+#if CONFIG_DISABLE_AMIGA_WHEELBUSMOUSE == 0
     /// @brief Destination of wheel quadrature signals
     std::shared_ptr<ControllerPortInterface> wheel_target_;
+#endif
 
     void process_mouse_report(MouseReport &mouse_report) override {
         h.add_to_accumulator(mouse_report.relx);
@@ -61,8 +62,9 @@ class QuadratureMouse : public RunnableMouseReportProcessor {
     void ensure_mouse_muxing() override {
         if (mouse_target_)
             mouse_target_->configure_gpios();
-
+#if CONFIG_DISABLE_AMIGA_WHEELBUSMOUSE == 0
         if (wheel_target_)
             wheel_target_->configure_gpios();
+#endif
     }
 };

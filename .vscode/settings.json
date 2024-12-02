@@ -87,7 +87,14 @@
         "stdbool.h": "c",
         "ctype.h": "c",
         "stdlib.h": "c",
-        "*.in": "cpp"
+        "*.in": "cpp",
+        "csignal": "cpp",
+        "hash_map": "cpp",
+        "charconv": "cpp",
+        "source_location": "cpp",
+        "format": "cpp",
+        "shared_mutex": "cpp",
+        "stdfloat": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/arm-none-eabi-gcc",
     "editor.formatOnSave": true,

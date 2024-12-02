@@ -30,10 +30,11 @@
 class Pipeline : public Runnable {
   private:
     /// @brief Controller Port 1, Mouse Port, Right Port
-    std::shared_ptr<JoystickMouseSwitcher> primary_mouse_switcher_{std::make_shared<JoystickMouseSwitcher>()};
+    std::shared_ptr<JoystickMouseSwitcher> primary_mouse_switcher_{std::make_shared<JoystickMouseSwitcher>(kMouse)};
 
     /// @brief Controller Port 2, Joystick Port, Left Port
-    std::shared_ptr<JoystickMouseSwitcher> primary_joystick_switcher_{std::make_shared<JoystickMouseSwitcher>()};
+    std::shared_ptr<JoystickMouseSwitcher> primary_joystick_switcher_{
+        std::make_shared<JoystickMouseSwitcher>(kGamePad)};
 
     /// @brief Proxy object which relays incoming controller port data
     std::shared_ptr<PortSwitcher> joystick_port_;
@@ -125,6 +126,12 @@ class Pipeline : public Runnable {
 
         runnables_.push_back(primary_mouse_switcher_);
         runnables_.push_back(primary_joystick_switcher_);
+
+        // Ensure muxing is performed even without attached device
+        primary_joystick_switcher_->ensure_muxing();
+        primary_mouse_switcher_->ensure_muxing();
+
+        PRINTF("Pipeline established\n");
     }
 
     /**

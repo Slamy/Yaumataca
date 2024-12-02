@@ -12,10 +12,10 @@
 #include <numeric>
 #include <queue>
 
+#include "config.h"
 #include "default_hid_handler.hpp"
 #include "field_extractor.hpp"
 #include "hid_handler_builder.hpp"
-#include "config.h"
 
 /**
  * @brief Generic handler of USB HID reports for mouses
@@ -93,16 +93,11 @@ class MouseReportHandler : public DefaultHidHandler {
                         bool is_const = (data8 & HID_CONSTANT) != 0;
 
                         if (is_const) {
-                            PRINTF("IGNORE!\n");
                             bit_offset += ri_report_size * ri_report_count;
 
                         } else {
                             if (is_relative) {
-                                PRINTF("RI_MAIN_INPUT REL %d %d %x %d\n", ri_report_count, ri_report_size, data8,
-                                       bit_offset);
-
                                 if (usages_level2.size() != ri_report_count) {
-                                    PRINTF("Report count not correct!\n");
                                     return;
                                 }
 
@@ -112,16 +107,12 @@ class MouseReportHandler : public DefaultHidHandler {
 
                                     switch (usage) {
                                     case HID_USAGE_DESKTOP_X:
-                                        printf("* X Axis is at %d with a width of %d\n", bit_offset, ri_report_size);
                                         get_x.configure(bit_offset, ri_report_size, true);
                                         break;
                                     case HID_USAGE_DESKTOP_Y:
-                                        printf("* Y Axis is at %d with a width of %d\n", bit_offset, ri_report_size);
                                         get_y.configure(bit_offset, ri_report_size, true);
                                         break;
                                     case HID_USAGE_DESKTOP_WHEEL:
-                                        printf("* Wheel Axis is at %d with a width of %d\n", bit_offset,
-                                               ri_report_size);
                                         get_wheel.configure(bit_offset, ri_report_size, true);
                                         break;
                                     }
@@ -129,12 +120,8 @@ class MouseReportHandler : public DefaultHidHandler {
                                 }
 
                             } else {
-                                PRINTF("RI_MAIN_INPUT ABS %d %d %x %d\n", ri_report_count, ri_report_size, data8,
-                                       bit_offset);
-
                                 // Yes, report_count is correct.
                                 // Buttons are bools
-                                printf("* Buttons are at %d with a width of %d\n", bit_offset, ri_report_count);
                                 get_buttons.configure(bit_offset, ri_report_count, false);
 
                                 bit_offset += ri_report_size * ri_report_count;
@@ -176,12 +163,8 @@ class MouseReportHandler : public DefaultHidHandler {
                     if (ri_collection_depth == 0) {
                     }
 
-                    for (int i = 0; i < ri_collection_depth; i++)
-                        PRINTF("  ");
-                    PRINTF("RI_GLOBAL_USAGE_PAGE %02x\r\n", data8);
                     switch (data8) {
                     case HID_USAGE_PAGE_BUTTON:
-                        PRINTF("BUTTON\n");
                         break;
                     }
 
@@ -199,29 +182,16 @@ class MouseReportHandler : public DefaultHidHandler {
                 case RI_GLOBAL_REPORT_ID:
                     bit_offset += 8;
 
-                    for (int i = 0; i < ri_collection_depth; i++)
-                        PRINTF("  ");
-
-                    PRINTF("RI_GLOBAL_REPORT_ID %02x\r\n", data8);
                     if (usage0 == HID_USAGE_DESKTOP_MOUSE)
                         expected_report_id_ = data8;
-
                     break;
 
                 case RI_GLOBAL_REPORT_SIZE:
                     ri_report_size = data8;
-                    for (int i = 0; i < ri_collection_depth; i++)
-                        PRINTF("  ");
-                    PRINTF("RI_GLOBAL_REPORT_SIZE %d\r\n", data8);
-
                     break;
 
                 case RI_GLOBAL_REPORT_COUNT:
                     ri_report_count = data8;
-                    for (int i = 0; i < ri_collection_depth; i++)
-                        PRINTF("  ");
-                    PRINTF("RI_GLOBAL_REPORT_COUNT %02x\r\n", data8);
-
                     break;
 
                 case RI_GLOBAL_UNIT_EXPONENT:
@@ -243,33 +213,13 @@ class MouseReportHandler : public DefaultHidHandler {
                 case RI_LOCAL_USAGE: {
                     // only take in account the "usage" before starting REPORT ID
 
-                    for (int i = 0; i < ri_collection_depth; i++)
-                        PRINTF("  ");
-
-                    const char *text{""};
-                    std::ignore = text;
                     if (ri_collection_depth == 2) {
                         usages_level2.push(data8);
-
-                        switch (data8) {
-                        case HID_USAGE_DESKTOP_X:
-                            text = "X";
-                            break;
-                        case HID_USAGE_DESKTOP_Y:
-                            text = "Y";
-                            break;
-                        case HID_USAGE_DESKTOP_WHEEL:
-                            text = "WHEEL";
-                            break;
-                        }
                     } else if (ri_collection_depth == 0) {
                         usage0 = data8;
                     } else if (ri_collection_depth == 1) {
                         usage1 = data8;
                     }
-
-                    PRINTF("RI_LOCAL_USAGE %02x %s\r\n", data8, text);
-
                     break;
                 }
                 case RI_LOCAL_USAGE_MIN:

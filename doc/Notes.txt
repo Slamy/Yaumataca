@@ -323,3 +323,12 @@ https://eleccelerator.com/usbdescreqparser/
 // 46 bytes
 
 
+
+Discussion about Amiga wheel mice protocol:
+
+https://github.com/willyvmm/mouSTer/issues/28
+https://github.com/willyvmm/mouSTer/issues/30
+http://elbox.com/products/cocolino.html
+https://github.com/paulroberthill/AmigaPS2Mouse
+https://github.com/sq7bti/AmigaMouse
+https://github.com/sq7bti/AmigaMouse/tree/tankmouse

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "config.h"
 #include <limits>
 
 #ifdef DEBUG_PRINT

@@ -192,6 +192,12 @@ Because USB Host Support for the RP2040 is not yet awesome
 
 Exactly
 
+### Funny anecdote
+
+The popularity of this project was increased dramatically just becausean Atari ST
+user was missing a mouse on a Commodore 64 party.
+This happened on the DoReCo (Dortmund Retro Computer) Party 2024 in Anröche, Germany.
+
 ## Sources of Inspiration
 
 My old project this here needs to surpass:<br>
