@@ -246,5 +246,25 @@ class Pipeline : public Runnable {
             fee_.write_config(static_cast<uint8_t>(mouse_mode_));
             mouse_mode_dirty_ = false;
         }
+
+        // Perform some plausibility checks
+        if (primary_joystick_switcher_->joystick_source_empty() &&
+            primary_mouse_switcher_->joystick_source_empty() == false) {
+
+            std::shared_ptr<ReportSourceInterface> joy = primary_mouse_switcher_->take_joystick_source();
+
+            if (joy)
+                joy->set_target(primary_joystick_switcher_);
+            PRINTF("Moving joystick over!\n");
+        }
+
+        if (primary_mouse_switcher_->mouse_source_empty() &&
+            primary_joystick_switcher_->mouse_source_empty() == false) {
+
+            std::shared_ptr<ReportSourceInterface> mouse = primary_joystick_switcher_->take_mouse_source();
+            if (mouse)
+                mouse->set_target(primary_mouse_switcher_);
+            PRINTF("Moving mouse over!\n");
+        }
     }
 };

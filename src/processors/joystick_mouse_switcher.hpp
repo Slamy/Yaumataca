@@ -67,6 +67,28 @@ class JoystickMouseSwitcher : public ReportHubInterface {
         return joystick_source_.expired();
     }
 
+    /**
+     * @brief Removes mouse source from this switcher
+     *
+     * @return Mouse source. Can be empty pointer.
+     */
+    std::shared_ptr<ReportSourceInterface> take_mouse_source() {
+        std::shared_ptr<ReportSourceInterface> temp = mouse_source_.lock();
+        mouse_source_.reset();
+        return temp;
+    }
+
+    /**
+     * @brief Removes joystick source from this switcher
+     *
+     * @return Joystick source. Can be empty pointer
+     */
+    std::shared_ptr<ReportSourceInterface> take_joystick_source() {
+        std::shared_ptr<ReportSourceInterface> temp = joystick_source_.lock();
+        joystick_source_.reset();
+        return temp;
+    }
+
     void register_source(std::shared_ptr<ReportSourceInterface> source) override {
         switch (source->expected_report()) {
         case kMouse:
@@ -115,12 +137,12 @@ class JoystickMouseSwitcher : public ReportHubInterface {
     }
 
     void ensure_mouse_muxing() override {
-        if (active_ == kMouse)
+        if (mouse_target_ && active_ == kMouse)
             mouse_target_->ensure_mouse_muxing();
     }
 
     void ensure_joystick_muxing() override {
-        if (active_ == kGamePad)
+        if (gamepad_target_ && active_ == kGamePad)
             gamepad_target_->ensure_joystick_muxing();
     }
 
