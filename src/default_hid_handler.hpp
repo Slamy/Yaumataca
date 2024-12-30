@@ -27,7 +27,7 @@
  */
 class DefaultHidHandler : public HidHandlerInterface {
   protected:
-    /// @brief data sinkt to feed reports to
+    /// @brief data sink to feed reports to
     std::shared_ptr<ReportHubInterface> target_;
 
   public:

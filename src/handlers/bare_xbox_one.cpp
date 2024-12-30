@@ -40,7 +40,7 @@ struct __attribute__((packed)) XboxOneButtonData {
 
 static void c_report_received(tuh_xfer_t *xfer);
 
-void configure_finished_received(tuh_xfer_t *xfer) {
+static void configure_finished_received(tuh_xfer_t *xfer) {
     std::ignore = xfer;
     PRINTF("configure_finished_received %d\r\n", xfer->result);
 }

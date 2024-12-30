@@ -66,7 +66,7 @@ extern "C" {
 //--------------------------------------------------------------------
 
 // Size of buffer to hold descriptors and other data used for enumeration
-#define CFG_TUH_ENUMERATION_BUFSIZE 256
+#define CFG_TUH_ENUMERATION_BUFSIZE 1024
 
 #define CFG_TUH_HUB 4
 #define CFG_TUH_CDC 0
@@ -77,7 +77,7 @@ extern "C" {
 // max device support (excluding hub device): 1 hub typically has 4 ports
 #define CFG_TUH_DEVICE_MAX 10
 
-// bare api support for xbox one controller
+// bare api support for xbox one controller and xbox 360 wireless receiver
 #define CFG_TUH_API_EDPT_XFER 1
 
 #define CFG_TUH_HID_EP_BUFSIZE 64

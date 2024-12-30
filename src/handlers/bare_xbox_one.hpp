@@ -1,6 +1,7 @@
+#pragma once
 
 // stolen from https://github.com/quantus/xbox-one-controller-protocol
-// https://github.com/felis/USB_Host_Shield_2.0/blob/master/XBOXONE
+// https://github.com/felis/USB_Host_Shield_2.0/blob/master/XBOXONE.h
 
 #include "bare_api.hpp"
 #include "processors/interfaces.hpp"
@@ -35,6 +36,15 @@
 #define XBOX_ONE_PID11 0x542A // Xbox ONE spectra
 #define XBOX_ONE_PID12 0x543A // PowerA Xbox One wired controller
 
+static inline bool check_xbox_one_vid_pid(uint16_t vid, uint16_t pid) {
+    return (vid == XBOX_VID1 || vid == XBOX_VID2 || vid == XBOX_VID3 || vid == XBOX_VID4 || vid == XBOX_VID5 ||
+            vid == XBOX_VID6) &&
+           (pid == XBOX_ONE_PID1 || pid == XBOX_ONE_PID2 || pid == XBOX_ONE_PID3 || pid == XBOX_ONE_PID4 ||
+            pid == XBOX_ONE_PID5 || pid == XBOX_ONE_PID6 || pid == XBOX_ONE_PID7 || pid == XBOX_ONE_PID8 ||
+            pid == XBOX_ONE_PID9 || pid == XBOX_ONE_PID10 || pid == XBOX_ONE_PID11 || pid == XBOX_ONE_PID12 ||
+            pid == XBOX_ONE_PID13 || pid == XBOX_ONE_PID14);
+}
+
 /**
  * @brief Handles the USB vendor class interface of Xbox One Controllers
  *
@@ -42,7 +52,7 @@
  */
 class XboxOneHandler : public ReportSourceInterface {
   protected:
-    /// @brief data sinkt to feed reports to
+    /// @brief data sink to feed reports to
     std::shared_ptr<ReportHubInterface> target_;
 
     /// @brief Buffer for input endpoint
