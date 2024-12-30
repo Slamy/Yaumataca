@@ -253,8 +253,10 @@ class Pipeline : public Runnable {
 
             std::shared_ptr<ReportSourceInterface> joy = primary_mouse_switcher_->take_joystick_source();
 
-            if (joy)
+            if (joy) {
                 joy->set_target(primary_joystick_switcher_);
+                primary_joystick_switcher_->register_source(joy);
+            }
             PRINTF("Moving joystick over!\n");
         }
 
@@ -262,8 +264,10 @@ class Pipeline : public Runnable {
             primary_joystick_switcher_->mouse_source_empty() == false) {
 
             std::shared_ptr<ReportSourceInterface> mouse = primary_joystick_switcher_->take_mouse_source();
-            if (mouse)
+            if (mouse) {
                 mouse->set_target(primary_mouse_switcher_);
+                primary_mouse_switcher_->register_source(mouse);
+            }
             PRINTF("Moving mouse over!\n");
         }
     }
