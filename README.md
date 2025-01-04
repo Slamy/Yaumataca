@@ -36,6 +36,7 @@ As multiple modes are supported, the [user manual](doc/user_manual.md) provides 
 	* PS3 DualShock
 	* PS4 DualShock
 	* Nintendo Switch Pro Controller
+	* Xbox 360 Wireless Receiver (1 or 2 controllers with one receiver)
 	* Xbox One Controller
 	* Xbox Series S/X Controller
 	* Mega World International - USB Game Controllers (07b5:0314)
